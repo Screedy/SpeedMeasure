@@ -1,0 +1,13 @@
+{
+	"name": "speedmeasure-runner",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "node run.mjs",
+		"test": "node --test"
+	},
+	"dependencies": {
+		"nodemailer": "^7.0.9",
+		"postgres": "^3.4.7"
+	}
+}
