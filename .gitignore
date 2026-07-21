@@ -1,0 +1,9 @@
+node_modules/
+.env
+app/build/
+app/.svelte-kit/
+app/src/lib/paraglide/
+.DS_Store
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
