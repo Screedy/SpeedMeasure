@@ -1,11 +1,12 @@
-<img src="app/src/lib/assets/favicon.svg" width="56" height="56" alt="" align="left" />
+<p align="center">
+  <img src="app/src/lib/assets/favicon.svg" width="88" height="88" alt="SpeedMeasure logo">
+</p>
 
-# SpeedMeasure
+<h1 align="center">SpeedMeasure</h1>
 
-Self-hosted internet speed monitoring. Runs speed tests on a schedule, keeps years of
-results, and alerts you when your ISP drops below the speed you're paying for.
-
-<br clear="left"/>
+<p align="center">
+  Self-hosted internet speed monitoring. Runs speed tests on a schedule, keeps years of results, and alerts you when your ISP drops below the speed you're paying for.
+</p>
 
 ## Quick start
 
