@@ -1,0 +1,59 @@
+:root {
+	--bg: #0b0e14;
+	--bg-rail: #0a0d13;
+	--bg-head: #0d1017;
+	--bg-panel: #111722;
+	--bg-input: #141922;
+	--bg-th: #0f141c;
+
+	--border: #1c222c;
+	--border-2: #232a35;
+	--border-3: #2b323d;
+	--border-4: #3a4552;
+	--border-row: #171d27;
+
+	--fg: #e6edf3;
+	--fg-2: #c9d1d9;
+	--fg-3: #8b949e;
+	--fg-4: #5b6472;
+	--fg-5: #4d5563;
+	--fg-6: #3d4552;
+
+	--accent: #2dd4bf;
+	--accent-2: #5eead4;
+	--accent-deep: #0ea5b7;
+	--accent-bg: #122e2b;
+	--accent-bg-hi: #153833;
+	--accent-nav: #112b28;
+	--accent-line: rgba(45, 212, 191, 0.28);
+	--accent-line-hi: rgba(45, 212, 191, 0.35);
+	--accent-wash: rgba(94, 234, 212, 0.09);
+	--accent-glow: rgba(45, 212, 191, 0.4);
+
+	--download: #3fb950;
+	--upload: #58a6ff;
+	--ping: #d29922;
+	--jitter: #bc8cff;
+	--loss: #f85149;
+
+	/* Lighter variants used for numbers in the results table. */
+	--download-2: #7ee08a;
+	--upload-2: #8ec8ff;
+	--ping-2: #e2c67d;
+	--jitter-2: #c9a9ff;
+
+	--danger-wash: rgba(248, 81, 73, 0.1);
+	--danger-line: rgba(248, 81, 73, 0.25);
+	--danger-fg: #f8918c;
+	--danger-bg: #3a1519;
+
+	--grid-line: #1a2029;
+
+	--mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+	--sans: 'IBM Plex Sans', system-ui, sans-serif;
+
+	--radius: 12px;
+	--radius-sm: 9px;
+	--radius-xs: 8px;
+	--radius-pill: 20px;
+}

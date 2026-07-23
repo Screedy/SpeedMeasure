@@ -1,0 +1,10 @@
+/* The always-loaded layer, imported once by the root layout.
+   Order matters: tokens define the variables everything else reads.
+
+   Route-specific sheets (dashboard, alerts, settings, login) and the two shared
+   feature sheets (table, chart) are imported by the components that use them, so
+   Vite only ships them with the routes that need them. */
+@import './tokens.css';
+@import './base.css';
+@import './layout.css';
+@import './components.css';

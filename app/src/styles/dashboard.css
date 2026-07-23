@@ -1,0 +1,276 @@
+/* Speed dashboard (routes/+page.svelte). The results table itself is in table.css. */
+
+/* ---------------------------------------------------------------- topbar */
+
+.topline {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.controls {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	margin-left: auto;
+	flex-wrap: wrap;
+}
+
+.windowlabel {
+	display: flex;
+	align-items: baseline;
+	gap: 7px;
+	padding-right: 4px;
+}
+
+.windowlabel__k {
+	font-size: 10px;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--fg-5);
+	font-family: var(--mono);
+}
+
+.windowlabel__v {
+	font-size: 12.5px;
+	color: var(--fg-2);
+}
+
+.presets {
+	display: flex;
+	background: var(--bg-input);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+}
+
+.presets button {
+	background: transparent;
+	color: var(--fg-3);
+	border: 0;
+	border-right: 1px solid var(--border-2);
+	padding: 6px 13px;
+	font-size: 12px;
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.presets button:last-child {
+	border-right: 0;
+}
+
+.presets button.on {
+	background: var(--accent-bg);
+	color: var(--accent-2);
+	font-weight: 600;
+}
+
+.live .dot {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--fg-4);
+}
+
+.live--on {
+	background: var(--accent-bg);
+	border-color: rgba(45, 212, 191, 0.3);
+	color: var(--accent-2);
+}
+
+.live--on .dot {
+	background: var(--accent);
+	animation: pulse 1.6s infinite;
+	box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.18);
+}
+
+/* -------------------------------------------------------- navigator strip */
+
+.navwrap {
+	margin-top: 11px;
+	position: relative;
+}
+
+.navfoot {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 1px;
+}
+
+.daterange {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+}
+
+.daterange input {
+	background: var(--bg-input);
+	border: 1px solid var(--border-2);
+	border-radius: 7px;
+	color: var(--fg-2);
+	font-size: 11.5px;
+	font-family: var(--mono);
+	outline: none;
+	padding: 3px 7px;
+}
+
+.daterange .sep {
+	color: var(--fg-6);
+	font-size: 11px;
+}
+
+/* ------------------------------------------------------------ stat cards */
+
+.statcards {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 14px;
+	margin-bottom: 20px;
+}
+
+.statcard {
+	background: var(--bg-panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 14px 15px 12px;
+	overflow: hidden;
+}
+
+.statcard__label {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 12px;
+	color: var(--fg-3);
+	font-weight: 500;
+}
+
+.statcard__swatch {
+	width: 9px;
+	height: 9px;
+	border-radius: 2px;
+}
+
+.statcard__value {
+	display: flex;
+	align-items: baseline;
+	gap: 5px;
+	margin-top: 9px;
+}
+
+.statcard__num {
+	font-size: 26px;
+	font-weight: 600;
+	letter-spacing: -0.5px;
+}
+
+.statcard__unit {
+	font-size: 12px;
+	color: var(--fg-4);
+}
+
+.statcard__meta {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-top: 8px;
+	font-size: 11px;
+	gap: 8px;
+}
+
+.statcard__avg {
+	font-size: 10.5px;
+	color: var(--fg-5);
+	white-space: nowrap;
+}
+
+.statcard__spark {
+	margin-top: 10px;
+	height: 32px;
+}
+
+/* ----------------------------------------------------------- chart panel */
+
+.chartpanel {
+	margin-bottom: 20px;
+}
+
+.chartbody {
+	padding: 8px 12px 14px;
+}
+
+.legend {
+	display: flex;
+	gap: 7px;
+	margin-left: auto;
+	flex-wrap: wrap;
+}
+
+.legend__item {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 5px 10px;
+	border-radius: var(--radius-xs);
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 500;
+	border: 1px solid var(--border-3);
+	background: var(--bg-input);
+	color: var(--fg);
+}
+
+/* Sized to match .legend__item exactly — this button sits in the same header row,
+   and .btn's default padding is a couple px taller, which visibly nudges the whole
+   row (and everything below it) down the moment the button appears. */
+.zoomout {
+	padding: 5px 10px;
+	font-size: 12px;
+}
+
+.legend__item--off {
+	border-color: transparent;
+	background: transparent;
+	color: var(--fg-5);
+	opacity: 0.55;
+}
+
+.legend__dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+}
+
+/* ------------------------------------------------------------ table tools */
+
+.tabletools {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-left: auto;
+	flex-wrap: wrap;
+}
+
+.pinclear {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: rgba(94, 234, 212, 0.1);
+	border: 1px solid var(--accent-line);
+	color: var(--accent-2);
+	font-size: 11px;
+	font-weight: 500;
+	padding: 3px 9px;
+	border-radius: var(--radius-pill);
+	cursor: pointer;
+	font-family: var(--mono);
+}
+
+.pinclear__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 1px;
+	background: var(--accent-2);
+}

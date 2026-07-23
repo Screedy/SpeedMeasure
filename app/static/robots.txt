@@ -1,0 +1,3 @@
+# Private self-hosted instance — nothing here is meant to be indexed.
+User-agent: *
+Disallow: /

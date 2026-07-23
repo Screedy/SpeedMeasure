@@ -1,0 +1,152 @@
+/* The results table, shared verbatim by the dashboard and the log page.
+   Imported by both routes; anything dashboard-only lives in dashboard.css. */
+
+.tablewrap {
+	overflow-x: auto;
+}
+
+.datatable {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 12.5px;
+}
+
+.datatable th {
+	padding: 0;
+	background: var(--bg-th);
+	border-bottom: 1px solid var(--border);
+	position: sticky;
+	top: 0;
+}
+
+/* The whole header cell is the sort control, so it gets the padding, not the th. */
+.datatable th button {
+	width: 100%;
+	padding: 11px 16px;
+	background: none;
+	border: 0;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--fg-4);
+	font-weight: 600;
+	cursor: pointer;
+	text-align: inherit;
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+}
+
+.datatable th.sorted button {
+	color: var(--fg-2);
+}
+
+.datatable .arrow {
+	color: var(--accent-2);
+	font-size: 10px;
+}
+
+.datatable td {
+	padding: 9px 16px;
+	border-bottom: 1px solid var(--border-row);
+	color: var(--fg-2);
+	white-space: nowrap;
+}
+
+.datatable .server {
+	color: var(--fg-3);
+}
+
+.datatable .server__dot {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--fg-4);
+	margin-right: 7px;
+}
+
+.datatable .server__provider {
+	margin-left: 8px;
+	font-size: 10px;
+	font-family: var(--mono);
+	color: var(--fg-5);
+	text-transform: uppercase;
+}
+
+/* Numeric columns: right-aligned, one colour per metric to match the chart. */
+.datatable .n {
+	text-align: right;
+}
+
+.datatable .n--download {
+	color: var(--download-2);
+	font-weight: 600;
+}
+
+.datatable .n--upload {
+	color: var(--upload-2);
+}
+
+.datatable .n--ping {
+	color: var(--ping-2);
+}
+
+.datatable .n--jitter {
+	color: var(--jitter-2);
+}
+
+/* Rows are only interactive on the dashboard, where they pin a point on the chart. */
+.datatable--selectable tbody tr {
+	cursor: pointer;
+}
+
+.datatable--selectable tbody tr.marked {
+	background: var(--bg-input);
+}
+
+.datatable--selectable tbody tr.pinned {
+	background: var(--accent-wash);
+	box-shadow: inset 3px 0 0 var(--accent-2);
+}
+
+/* ------------------------------------------------------ table furniture */
+
+.table-search {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	background: var(--bg-input);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	padding: 6px 10px;
+}
+
+.table-search input {
+	background: transparent;
+	border: 0;
+	color: var(--fg-2);
+	font-size: 12.5px;
+	outline: none;
+	width: 210px;
+}
+
+.table-empty {
+	padding: 38px;
+	text-align: center;
+	color: var(--fg-4);
+	font-size: 13px;
+}
+
+.pager {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 18px;
+	border-top: 1px solid var(--border);
+}
+
+.pager__buttons {
+	display: flex;
+	gap: 8px;
+}

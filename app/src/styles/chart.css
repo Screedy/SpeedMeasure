@@ -1,0 +1,93 @@
+/* Shared by Chart.svelte and NavStrip.svelte — both are hand-rolled SVG with the same
+   axis-label and drag-capture treatment. */
+
+.chart {
+	position: relative;
+	width: 100%;
+}
+
+.chart svg,
+.navstrip {
+	display: block;
+	user-select: none;
+	touch-action: none;
+}
+
+.chart svg {
+	height: auto;
+}
+
+.navstrip {
+	height: 58px;
+}
+
+/* Transparent overlay that receives the pointer events, so the maths never depends
+   on which mark happens to be under the cursor. */
+.capture {
+	cursor: crosshair;
+}
+
+.tick {
+	font-size: 10.5px;
+	fill: var(--fg-4);
+	font-family: var(--mono);
+}
+
+.tick--sm {
+	font-size: 9.5px;
+	fill: var(--fg-5);
+}
+
+.axis-unit {
+	font-size: 9.5px;
+	fill: var(--fg-5);
+	font-family: var(--mono);
+}
+
+/* ---------------------------------------------------------------- tooltip */
+
+.tooltip {
+	position: absolute;
+	top: 10px;
+	background: var(--bg);
+	border: 1px solid var(--border-3);
+	border-radius: var(--radius-sm);
+	padding: 9px 11px;
+	pointer-events: none;
+	box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+	min-width: 150px;
+	z-index: 5;
+}
+
+.tooltip__time {
+	font-size: 11px;
+	color: var(--fg-3);
+	font-family: var(--mono);
+	margin-bottom: 6px;
+}
+
+.tooltip__row {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	font-size: 12px;
+	padding: 2px 0;
+}
+
+.tooltip__dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	flex: none;
+}
+
+.tooltip__label {
+	color: var(--fg-3);
+	flex: 1;
+}
+
+.tooltip__value {
+	font-family: var(--mono);
+	color: var(--fg);
+	font-weight: 600;
+}

@@ -1,0 +1,270 @@
+/* Cross-page primitives: panels, buttons, chips, form fields, text utilities.
+   If a rule is only ever used by one route, it belongs in that route's stylesheet. */
+
+/* ----------------------------------------------------------------- panels */
+
+.panel {
+	background: var(--bg-panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+}
+
+.panel__head {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 14px 18px;
+	border-bottom: 1px solid var(--border);
+	flex-wrap: wrap;
+}
+
+.panel__title {
+	font-size: 14px;
+	font-weight: 600;
+}
+
+/* ------------------------------------------------------------------- text */
+
+.mono {
+	font-family: var(--mono);
+}
+
+.hint {
+	font-size: 11px;
+	color: var(--fg-4);
+	font-family: var(--mono);
+}
+
+.rule {
+	height: 1px;
+	background: var(--border);
+	margin: 20px 0;
+}
+
+.saved {
+	font-size: 12px;
+	color: var(--accent-2);
+	font-family: var(--mono);
+}
+
+.error {
+	font-size: 12px;
+	color: var(--loss);
+}
+
+/* Same colour, promoted to a callout box where there is room for one. */
+.error--banner {
+	display: block;
+	font-size: 12.5px;
+	background: var(--danger-wash);
+	border: 1px solid var(--danger-line);
+	border-radius: var(--radius-xs);
+	padding: 8px 11px;
+}
+
+.tag {
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	font-family: var(--mono);
+	padding: 1px 6px;
+	border-radius: var(--radius-pill);
+	background: var(--accent-bg);
+	color: var(--accent-2);
+}
+
+.tag--danger {
+	background: var(--danger-bg);
+	color: var(--loss);
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: var(--bg-input);
+	border: 1px solid var(--border-2);
+	color: var(--fg-2);
+	font-size: 12px;
+	font-weight: 500;
+	padding: 7px 13px;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+}
+
+.btn:hover:not(:disabled) {
+	border-color: var(--border-4);
+	color: var(--fg);
+}
+
+.btn:disabled {
+	color: var(--fg-6);
+	cursor: default;
+	opacity: 0.5;
+}
+
+.btn--accent {
+	background: var(--accent-bg);
+	border-color: var(--accent-line);
+	color: var(--accent-2);
+	font-weight: 600;
+	padding: 8px 15px;
+}
+
+.btn--accent:hover:not(:disabled) {
+	background: var(--accent-bg-hi);
+	border-color: var(--accent-line);
+	color: var(--accent-2);
+}
+
+.chip {
+	padding: 7px 13px;
+	border-radius: var(--radius-xs);
+	font-size: 12.5px;
+	cursor: pointer;
+	font-weight: 500;
+	border: 1px solid var(--border-2);
+	background: var(--bg-head);
+	color: var(--fg-3);
+}
+
+.chip--on {
+	font-weight: 600;
+	border-color: var(--accent-line-hi);
+	background: var(--accent-bg);
+	color: var(--accent-2);
+}
+
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	max-width: 520px;
+}
+
+/* Segmented control. Works with <button aria-pressed> or a radio group (.seg__opt). */
+.seg {
+	display: flex;
+	background: var(--bg-head);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-sm);
+	overflow: hidden;
+}
+
+.seg button {
+	flex: 1;
+	text-align: center;
+	padding: 8px 10px;
+	font-size: 12.5px;
+	cursor: pointer;
+	border: 0;
+	border-right: 1px solid var(--border-2);
+	background: transparent;
+	color: var(--fg-3);
+	font-weight: 500;
+}
+
+.seg button:last-child {
+	border-right: 0;
+}
+
+.seg button[aria-pressed='true'] {
+	background: var(--accent-bg);
+	color: var(--accent-2);
+	font-weight: 600;
+}
+
+.switch {
+	position: relative;
+	width: 42px;
+	height: 24px;
+	flex: none;
+	border-radius: var(--radius-pill);
+	border: 0;
+	cursor: pointer;
+	padding: 0;
+	background: var(--border-2);
+	transition: background 0.15s;
+}
+
+.switch[aria-checked='true'] {
+	background: var(--accent);
+}
+
+.switch span {
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 18px;
+	height: 18px;
+	border-radius: 50%;
+	background: #fff;
+	transform: translateX(0);
+	transition: transform 0.15s;
+}
+
+.switch[aria-checked='true'] span {
+	transform: translateX(18px);
+}
+
+/* ------------------------------------------------------------------ forms */
+
+/* Direct child only — a nested control like .seg__opt is also a <label> but
+   shouldn't inherit field-label spacing/sizing. */
+.field > label,
+.label {
+	display: block;
+	font-size: 12px;
+	color: var(--fg-3);
+	margin-bottom: 6px;
+	font-weight: 500;
+}
+
+.field input,
+.field select {
+	width: 100%;
+	background: var(--bg-head);
+	border: 1px solid var(--border-2);
+	border-radius: var(--radius-xs);
+	color: var(--fg);
+	font-size: 13px;
+	padding: 9px 11px;
+	outline: none;
+}
+
+.field input:focus,
+.field select:focus {
+	border-color: var(--accent-line);
+}
+
+/* Width constraints — forms read badly when inputs stretch the full panel. */
+.field--narrow {
+	max-width: 420px;
+}
+
+.field--tiny {
+	max-width: 260px;
+}
+
+.form-grid {
+	display: grid;
+	gap: 12px;
+}
+
+.form-grid--two {
+	grid-template-columns: 1fr 1fr;
+	max-width: 520px;
+}
+
+.form-grid__full {
+	grid-column: 1 / -1;
+}
+
+.form-actions {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}

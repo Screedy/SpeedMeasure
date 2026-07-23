@@ -1,0 +1,65 @@
+/* Element defaults and the reset. Nothing here targets a class. */
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+body {
+	background: var(--bg);
+	color: var(--fg);
+	font-family: var(--sans);
+	-webkit-font-smoothing: antialiased;
+}
+
+a {
+	color: var(--upload);
+	text-decoration: none;
+}
+
+a:hover {
+	color: #79b8ff;
+}
+
+input,
+button,
+select {
+	font-family: inherit;
+}
+
+/* Without this the native pickers render light-on-light in a dark UI. */
+input[type='datetime-local'],
+input[type='time'] {
+	color-scheme: dark;
+}
+
+::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--border-3);
+	border-radius: 6px;
+	border: 2px solid var(--bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--border-4);
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.35;
+	}
+}

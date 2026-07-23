@@ -1,0 +1,209 @@
+/* Settings page (routes/settings/+page.svelte).
+   Field, grid and action layout come from components.css. */
+
+.settings__stack {
+	max-width: 800px;
+	margin: 0 auto;
+	display: flex;
+	flex-direction: column;
+	gap: 18px;
+}
+
+.settings__signout {
+	margin-left: auto;
+}
+
+.settings-section {
+	background: var(--bg-panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 20px 22px;
+}
+
+.settings-section h2 {
+	font-size: 15px;
+	font-weight: 600;
+	margin: 0;
+}
+
+.settings-section__headrow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.settings-section h3 {
+	font-size: 13px;
+	font-weight: 600;
+	margin: 0;
+}
+
+/* The description directly under a section heading. */
+.settings-section > p {
+	font-size: 12.5px;
+	color: var(--fg-4);
+	margin: 3px 0 0;
+	line-height: 1.5;
+}
+
+/* Vertical rhythm: every block in a section is spaced the same way. */
+.settings-section .field,
+.settings-section .block,
+.settings-section .form-grid {
+	margin-top: 14px;
+}
+
+.settings-section .form-grid__full {
+	margin-top: 0;
+}
+
+.settings-section .form-actions {
+	margin-top: 16px;
+}
+
+.settings-section .note {
+	font-size: 12px;
+	color: var(--fg-3);
+	margin: 8px 0 0;
+	line-height: 1.6;
+	max-width: 560px;
+}
+
+.settings-section .note strong {
+	color: var(--fg);
+}
+
+.settings-section .fineprint {
+	font-size: 11px;
+	color: var(--fg-4);
+	margin: 0 0 14px;
+	line-height: 1.5;
+	max-width: 560px;
+}
+
+.smtp-grid {
+	grid-template-columns: 2fr 1fr;
+}
+
+.pw-grid {
+	grid-template-columns: 1fr 1fr;
+	max-width: 560px;
+}
+
+/* ------------------------------------------------------------- providers */
+
+.checkchip {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 7px 13px;
+	border-radius: var(--radius-xs);
+	font-size: 12.5px;
+	cursor: pointer;
+	border: 1px solid var(--border-2);
+	background: var(--bg-head);
+	color: var(--fg-3);
+}
+
+.checkchip:has(input:checked) {
+	border-color: var(--accent-line-hi);
+	background: var(--accent-bg);
+	color: var(--accent-2);
+	font-weight: 600;
+}
+
+.checkchip input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.checkchip svg,
+.checkchip__logo {
+	flex-shrink: 0;
+	width: 16px;
+	height: 16px;
+}
+
+/* Radio group styled as a segmented control — one native control, no JS state. */
+.seg__opt {
+	flex: 1;
+	display: block;
+	position: relative;
+	cursor: pointer;
+}
+
+.seg__opt input {
+	position: absolute;
+	opacity: 0;
+	inset: 0;
+	cursor: pointer;
+}
+
+.seg__opt span {
+	display: block;
+	text-align: center;
+	padding: 8px 10px;
+	font-size: 12.5px;
+	color: var(--fg-3);
+	font-weight: 500;
+	border-right: 1px solid var(--border-2);
+}
+
+.seg__opt:last-child span {
+	border-right: 0;
+}
+
+.seg__opt:has(input:checked) span {
+	background: var(--accent-bg);
+	color: var(--accent-2);
+	font-weight: 600;
+}
+
+/* --------------------------------------------------------------- toggles */
+
+.toggle-row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 16px;
+	max-width: 560px;
+}
+
+.toggle-row__title {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--fg);
+	font-weight: 600;
+}
+
+/* ---------------------------------------------------------------- slider */
+
+.sliderhead {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	max-width: 520px;
+}
+
+.sliderhead label {
+	font-size: 12px;
+	color: var(--fg-3);
+	font-weight: 500;
+}
+
+.sliderhead .readout {
+	font-size: 12.5px;
+	color: var(--accent-2);
+}
+
+.settings-section input[type='range'] {
+	width: 100%;
+	max-width: 520px;
+	margin-top: 10px;
+	accent-color: var(--accent);
+}
