@@ -1,0 +1,63 @@
+name: speedmeasure
+
+x-db-env: &db-env
+  DATABASE_URL: postgres://speed:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/speed
+  TZ: ${TZ:-UTC}
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: speed
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: speed
+      TZ: ${TZ:-UTC}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U speed -d speed']
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    expose:
+      - '5432'
+
+  app:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+    restart: unless-stopped
+    environment:
+      <<: *db-env
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET in .env}
+      # Session cookies are Secure by default; set this when serving plain HTTP on a LAN.
+      INSECURE_COOKIES: ${INSECURE_COOKIES:-}
+      ORIGIN: ${ORIGIN:-http://localhost:8080}
+    ports:
+      - '${PORT:-8080}:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  runner:
+    build:
+      context: .
+      dockerfile: runner/Dockerfile
+    restart: unless-stopped
+    environment: *db-env
+    # No ports: it runs no server (LISTEN/NOTIFY on `db` is an outbound subscription,
+    # not a socket it opens) — nothing to publish, and nothing should ever need to
+    # reach in. Keep it that way; a port here would be attack surface with no purpose.
+    #
+    # default bridge network. NAT costs a percent or two on a gigabit line and
+    # keeps this portable (host networking is Linux-only and breaks DNS to `db`). If you
+    # need the last percent on a multi-gig link, switch to network_mode: host and point
+    # DATABASE_URL at the host's IP.
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db-data:

@@ -1,5 +1,5 @@
 # Debian rather than Alpine: the Ookla CLI ships glibc binaries only.
-FROM node:22-bookworm-slim
+FROM node:24-bookworm-slim
 
 # Provided automatically by buildx / compose; drives the x86_64 vs aarch64 downloads.
 ARG TARGETARCH
@@ -25,6 +25,10 @@ RUN apt-get update \
 WORKDIR /srv
 COPY runner/package*.json ./
 RUN npm ci --omit=dev
+# The bundled npm CLI (and its own node_modules — tar, undici, etc.) is never invoked
+# at runtime; CMD is a plain `node run.mjs`. Strip it rather than chase CVEs in code
+# that never executes here.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
 COPY runner/ ./
 COPY shared/ ./shared/
 
