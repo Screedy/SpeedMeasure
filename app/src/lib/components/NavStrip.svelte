@@ -24,9 +24,13 @@
 	const plotW = W - 2 * PAD.x;
 	const plotH = H - PAD.t - PAD.b;
 	const DRAG_THRESHOLD = 6;
+	// How close (in viewBox px) a pointerdown must land to an edge to grab it.
+	const HANDLE_HIT = 9;
 
 	let svg = $state<SVGSVGElement>();
 	let brush = $state<{ x0: number; x1: number } | null>(null);
+	/** Which edge is currently grabbed (dragging or just hovered) — drives the cursor. */
+	let grabEdge = $state<'left' | 'right' | null>(null);
 
 	const span = $derived(Math.max(1, end - start));
 	const maxDown = $derived(niceMax(Math.max(...series.map((p) => p.download), 0) * 1.02 || 100));
@@ -57,15 +61,27 @@
 	}
 	const timeAt = (px: number) => start + ((px - PAD.x) / plotW) * span;
 
+	const edgeAt = (px: number) => {
+		if (Math.abs(px - windowX0) <= HANDLE_HIT) return 'left';
+		if (Math.abs(px - windowX1) <= HANDLE_HIT) return 'right';
+		return null;
+	};
+
 	function ondown(event: PointerEvent) {
-		brush = { x0: viewBoxX(event), x1: viewBoxX(event) };
+		const px = viewBoxX(event);
+		const edge = edgeAt(px);
+		grabEdge = edge;
+		const anchor = edge === 'left' ? windowX1 : edge === 'right' ? windowX0 : px;
+		brush = { x0: anchor, x1: px };
 		// Keep receiving pointermove/pointerup for this drag even once the cursor strays
 		// outside the (fairly narrow) capture rect — a long horizontal drag easily drifts
 		// a few pixels vertically, and without capture that would silently drop the drag.
 		(event.currentTarget as Element).setPointerCapture(event.pointerId);
 	}
 	function onmove(event: PointerEvent) {
-		if (brush) brush = { ...brush, x1: viewBoxX(event) };
+		const px = viewBoxX(event);
+		if (brush) brush = { ...brush, x1: px };
+		else grabEdge = edgeAt(px);
 	}
 	function onup() {
 		if (brush && Math.abs(brush.x1 - brush.x0) > DRAG_THRESHOLD) {
@@ -74,6 +90,7 @@
 			onselect(t0, t1);
 		}
 		brush = null;
+		grabEdge = null;
 	}
 </script>
 
@@ -107,7 +124,16 @@
 		rx="3"
 	/>
 	{#each [windowX0, windowX1] as handle, i (i)}
-		<rect x={handle - 1.4} y={PAD.t + plotH / 2 - 7} width="2.8" height="14" rx="1.4" fill="var(--accent-2)" />
+		{@const active = grabEdge === (i === 0 ? 'left' : 'right')}
+		<rect
+			x={handle - (active ? 2 : 1.4)}
+			y={PAD.t + plotH / 2 - (active ? 9 : 7)}
+			width={active ? 4 : 2.8}
+			height={active ? 18 : 14}
+			rx="1.4"
+			fill="var(--accent-2)"
+			opacity={active ? 1 : 0.85}
+		/>
 	{/each}
 
 	{#each ticks as tick (tick.t)}
@@ -137,6 +163,7 @@
 		width={W}
 		height={PAD.t + plotH}
 		fill="transparent"
+		style:cursor={grabEdge ? 'ew-resize' : 'crosshair'}
 		onpointerdown={ondown}
 		onpointermove={onmove}
 		onpointerup={onup}

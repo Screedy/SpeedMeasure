@@ -87,7 +87,11 @@ export async function loadOverview(): Promise<{
 	return {
 		series: rows.map((r) => ({ t: r.t.getTime(), download: Number(r.download ?? 0) })),
 		start: range.lo.getTime(),
-		end: range.hi.getTime()
+		// +1: Postgres timestamptz has microsecond precision, JS Date only milliseconds —
+		// .getTime() truncates, so the row that IS the max can sub-millisecond-round to
+		// just before `end`, silently dropping out of `WHERE time <= end` upper bounds
+		// built from this value.
+		end: range.hi.getTime() + 1
 	};
 }
 

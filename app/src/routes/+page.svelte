@@ -49,35 +49,41 @@
 		goto(url, { replaceState: true, keepFocus: true, noScroll: true });
 	}
 
+	// A dragged/typed window is a deliberate, absolute selection — clear any active
+	// preset (`range=`) so it stops rolling forward with new data.
 	function setRange(from: number, to: number, push = false) {
 		if (push) zoomStack.push({ from: data.from, to: data.to });
-		navigate({ from: Math.round(Math.min(from, to)), to: Math.round(Math.max(from, to)), page: 1 });
+		navigate({
+			from: Math.round(Math.min(from, to)),
+			to: Math.round(Math.max(from, to)),
+			range: null,
+			page: 1
+		});
 	}
 
-	function preset(ms: number | null) {
+	// A preset is a rolling window — just its id goes in the URL, and the server
+	// re-derives from/to off the current overview on every load, so it keeps following
+	// new measurements instead of freezing at whatever "now" was when it was clicked.
+	function preset(id: string) {
 		zoomStack = [];
-		const to = data.overview.end;
-		setRange(ms === null ? data.overview.start : to - ms, to);
+		navigate({ range: id, from: null, to: null, page: 1 });
 	}
 
 	function zoomOut() {
 		const prev = zoomStack.pop();
-		if (prev) navigate({ from: prev.from, to: prev.to, page: 1 });
+		if (prev) navigate({ from: prev.from, to: prev.to, range: null, page: 1 });
 	}
 
 	const presets = [
-		{ label: '24h', ms: DAY },
-		{ label: '3d', ms: 3 * DAY },
-		{ label: '7d', ms: 7 * DAY },
-		{ label: '14d', ms: 14 * DAY },
-		{ label: m.preset_all(), ms: null }
+		{ id: '24h', label: '24h' },
+		{ id: '3d', label: '3d' },
+		{ id: '7d', label: '7d' },
+		{ id: '14d', label: '14d' },
+		{ id: 'all', label: m.preset_all() }
 	];
 
-	// A preset is "active" when the window ends at the newest data and matches its length
-	// exactly — a fuzzy tolerance here would make e.g. a 34h "All" span light up "24h" too.
 	const atLatest = $derived(Math.abs(data.to - data.overview.end) < 12 * HOUR);
-	const isActivePreset = (ms: number | null) =>
-		ms === null ? data.from <= data.overview.start + HOUR && atLatest : atLatest && span === ms;
+	const isActivePreset = (id: string) => data.range === id;
 
 	const rangeLabel = $derived.by(() => {
 		const hours = span / HOUR;
@@ -92,8 +98,9 @@
 		if (!live) return;
 		const timer = setInterval(async () => {
 			await invalidateAll();
-			// Follow the newest data only if we were already pinned to the right edge.
-			if (atLatest) setRange(data.overview.end - span, data.overview.end);
+			// A preset (data.range) re-derives its own window server-side on every reload —
+			// only a custom/dragged window pinned to the right edge needs a manual nudge.
+			if (!data.range && atLatest) setRange(data.overview.end - span, data.overview.end);
 		}, LIVE_POLL_MS);
 		return () => clearInterval(timer);
 	});
@@ -190,7 +197,7 @@
 			await invalidateAll();
 			if (data.overview.end > sinceEnd) {
 				stopRunPoll();
-				if (atLatest) setRange(data.overview.end - span, data.overview.end);
+				if (!data.range && atLatest) setRange(data.overview.end - span, data.overview.end);
 				runState = 'done';
 				setTimeout(() => (runState = 'idle'), 2000);
 			} else if (Date.now() > deadline) {
@@ -217,8 +224,8 @@
 			</div>
 
 			<div class="presets">
-				{#each presets as p (p.label)}
-					<button class:on={isActivePreset(p.ms)} onclick={() => preset(p.ms)}>{p.label}</button>
+				{#each presets as p (p.id)}
+					<button class:on={isActivePreset(p.id)} onclick={() => preset(p.id)}>{p.label}</button>
 				{/each}
 			</div>
 
