@@ -53,6 +53,8 @@
 	"no_results": "No test results match this filter.",
 	"col_timestamp": "Timestamp",
 	"col_server": "Server / target",
+	"flag_invalid": "Flag invalid",
+	"unflag_invalid": "Unflag",
 	"page_label": "Page {page} of {pages} · showing {shown}",
 	"prev": "Prev",
 	"next": "Next",

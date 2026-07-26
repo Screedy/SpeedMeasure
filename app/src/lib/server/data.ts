@@ -9,6 +9,7 @@ export interface Bucket extends Point {
 export interface Row extends Point {
 	provider: string;
 	server: string;
+	invalid: boolean;
 }
 
 /** Columns the table may be sorted by. Whitelisted — these are interpolated as identifiers. */
@@ -56,7 +57,7 @@ export async function loadBuckets(from: Date, to: Date): Promise<Bucket[]> {
 		       avg(loss_pct)      AS loss,
 		       count(*)::int      AS count
 		FROM measurement
-		WHERE time >= ${from} AND time <= ${to}
+		WHERE time >= ${from} AND time <= ${to} AND NOT invalid
 		GROUP BY date_bin(${`${bucketMs} milliseconds`}::interval, time, 'epoch'::timestamptz)
 		ORDER BY 1`;
 
@@ -70,7 +71,7 @@ export async function loadOverview(): Promise<{
 	end: number;
 }> {
 	const [range] = await sql<{ lo: Date | null; hi: Date | null }[]>`
-		SELECT min(time) AS lo, max(time) AS hi FROM measurement`;
+		SELECT min(time) AS lo, max(time) AS hi FROM measurement WHERE NOT invalid`;
 	if (!range.lo || !range.hi) {
 		const now = Date.now();
 		return { series: [], start: now - 24 * 60 * MINUTE, end: now };
@@ -81,6 +82,7 @@ export async function loadOverview(): Promise<{
 		SELECT to_timestamp(avg(extract(epoch from time))) AS t,
 		       avg(download_mbps) AS download
 		FROM measurement
+		WHERE NOT invalid
 		GROUP BY date_bin(${`${bucketMs} milliseconds`}::interval, time, 'epoch'::timestamptz)
 		ORDER BY 1`;
 
@@ -104,6 +106,8 @@ interface TableQuery {
 	desc: boolean;
 	offset: number;
 	limit: number;
+	/** The log page keeps invalid-flagged rows visible; everywhere else excludes them. */
+	includeInvalid?: boolean;
 }
 
 /** Sorting, filtering and paging all happen in the database*/
@@ -111,6 +115,7 @@ export async function loadRows(q: TableQuery): Promise<{ rows: Row[]; total: num
 	const column = sql(SORTABLE[q.sortKey]);
 	const window =
 		q.from && q.to ? sql`time >= ${q.from} AND time <= ${q.to}` : sql`TRUE`;
+	const validOnly = q.includeInvalid ? sql`TRUE` : sql`NOT invalid`;
 	const search = q.query.trim();
 	const like = `%${search}%`;
 	// An empty search is the TRUE predicate rather than a special case downstream.
@@ -120,11 +125,11 @@ export async function loadRows(q: TableQuery): Promise<{ rows: Row[]; total: num
 		: sql`TRUE`;
 
 	const rows = await sql`
-		SELECT time AS t, provider, server,
+		SELECT time AS t, provider, server, invalid,
 		       download_mbps AS download, upload_mbps AS upload,
 		       ping_ms AS ping, jitter_ms AS jitter, loss_pct AS loss
 		FROM measurement
-		WHERE ${window} AND ${matches}
+		WHERE ${window} AND ${validOnly} AND ${matches}
 		ORDER BY ${column} ${q.desc ? sql`DESC` : sql`ASC`}
 		LIMIT ${q.limit} OFFSET ${q.offset}`;
 
@@ -132,10 +137,10 @@ export async function loadRows(q: TableQuery): Promise<{ rows: Row[]; total: num
 		SELECT count(*)::int AS in_range,
 		       count(*) FILTER (WHERE ${matches})::int AS matched
 		FROM measurement
-		WHERE ${window}`;
+		WHERE ${window} AND ${validOnly}`;
 
 	return {
-		rows: rows.map((r) => ({ ...toPoint(r), provider: r.provider, server: r.server ?? '—' })),
+		rows: rows.map((r) => ({ ...toPoint(r), provider: r.provider, server: r.server ?? '—', invalid: r.invalid })),
 		total: counts.matched,
 		inRange: counts.in_range
 	};
@@ -151,7 +156,7 @@ export async function loadRecentPoints(days = 90): Promise<Point[]> {
 		SELECT time AS t, download_mbps AS download, upload_mbps AS upload,
 		       ping_ms AS ping, jitter_ms AS jitter, loss_pct AS loss
 		FROM measurement
-		WHERE time > now() - ${`${days} days`}::interval
+		WHERE time > now() - ${`${days} days`}::interval AND NOT invalid
 		ORDER BY time`;
 	return rows.map(toPoint);
 }
@@ -161,6 +166,6 @@ export function streamCsv(from: Date, to: Date) {
 	return sql`
 		SELECT time, provider, server, download_mbps, upload_mbps, ping_ms, jitter_ms, loss_pct
 		FROM measurement
-		WHERE time >= ${from} AND time <= ${to}
+		WHERE time >= ${from} AND time <= ${to} AND NOT invalid
 		ORDER BY time`.cursor(1000);
 }

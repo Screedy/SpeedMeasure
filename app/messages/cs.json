@@ -53,6 +53,8 @@
 	"no_results": "Filtru neodpovídají žádné výsledky.",
 	"col_timestamp": "Čas",
 	"col_server": "Server / cíl",
+	"flag_invalid": "Označit neplatné",
+	"unflag_invalid": "Zrušit",
 	"page_label": "Stránka {page} z {pages} · zobrazeno {shown}",
 	"prev": "Předchozí",
 	"next": "Další",

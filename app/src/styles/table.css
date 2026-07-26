@@ -9,6 +9,7 @@
 	width: 100%;
 	border-collapse: collapse;
 	font-size: 12.5px;
+	table-layout: fixed;
 }
 
 .datatable th {
@@ -108,6 +109,20 @@
 .datatable--selectable tbody tr.pinned {
 	background: var(--accent-wash);
 	box-shadow: inset 3px 0 0 var(--accent-2);
+}
+
+.datatable tr.row--invalid {
+	opacity: 0.5;
+	box-shadow: inset 3px 0 0 var(--loss);
+}
+
+.datatable .actions {
+	white-space: nowrap;
+	text-align: right;
+}
+
+.datatable .actions form {
+	display: inline-block;
 }
 
 /* ------------------------------------------------------ table furniture */

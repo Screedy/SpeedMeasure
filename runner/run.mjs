@@ -54,7 +54,7 @@ async function recentPoints() {
 	const rows = await sql`
 		SELECT time, download_mbps, upload_mbps, ping_ms, jitter_ms, loss_pct
 		FROM measurement
-		WHERE time > now() - ${`${ALERT_WINDOW_DAYS} days`}::interval
+		WHERE time > now() - ${`${ALERT_WINDOW_DAYS} days`}::interval AND NOT invalid
 		ORDER BY time`;
 	return rows.map((r) => ({
 		t: r.time.getTime(),

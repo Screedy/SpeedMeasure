@@ -2,6 +2,7 @@
 	import '../../styles/table.css';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
+	import { enhance } from '$app/forms';
 	import { fmtTime, num } from '$lib/format';
 	import { m } from '$lib/paraglide/messages';
 
@@ -61,6 +62,15 @@
 
 		<div class="tablewrap">
 			<table class="datatable">
+				<colgroup>
+					<col style="width: 130px" />
+					<col />
+					<col style="width: 90px" />
+					<col style="width: 90px" />
+					<col style="width: 80px" />
+					<col style="width: 80px" />
+					<col style="width: 150px" />
+				</colgroup>
 				<thead>
 					<tr>
 						{#each columns as col (col.key)}
@@ -70,17 +80,25 @@
 								</button>
 							</th>
 						{/each}
+						<th></th>
 					</tr>
 				</thead>
 				<tbody>
 					{#each data.rows as row (row.t + row.provider)}
-						<tr>
+						<tr class:row--invalid={row.invalid}>
 							<td class="mono">{fmtTime(row.t)}</td>
 							<td class="server">{row.server}<span class="server__provider">{row.provider}</span></td>
 							<td class="mono n n--download">{num(row.download, 'download')}</td>
 							<td class="mono n n--upload">{num(row.upload, 'upload')}</td>
 							<td class="mono n n--ping">{num(row.ping, 'ping')}</td>
 							<td class="mono n n--jitter">{num(row.jitter, 'jitter')}</td>
+							<td class="actions">
+								<form method="POST" action="?/toggleInvalid" use:enhance>
+									<input type="hidden" name="t" value={row.t} />
+									<input type="hidden" name="provider" value={row.provider} />
+									<button class="btn" type="submit">{row.invalid ? m.unflag_invalid() : m.flag_invalid()}</button>
+								</form>
+							</td>
 						</tr>
 					{/each}
 				</tbody>

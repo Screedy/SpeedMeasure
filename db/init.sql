@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS measurement (
   ping_ms       real CHECK (ping_ms >= 0),
   jitter_ms     real CHECK (jitter_ms >= 0),
   loss_pct      real CHECK (loss_pct BETWEEN 0 AND 100),
+  invalid       boolean NOT NULL DEFAULT false,
   PRIMARY KEY (time, provider)
 );
 

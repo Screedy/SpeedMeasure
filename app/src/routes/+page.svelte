@@ -373,6 +373,14 @@
 
 		<div class="tablewrap">
 			<table class="datatable datatable--selectable">
+				<colgroup>
+					<col style="width: 130px" />
+					<col />
+					<col style="width: 90px" />
+					<col style="width: 90px" />
+					<col style="width: 80px" />
+					<col style="width: 80px" />
+				</colgroup>
 				<thead>
 					<tr>
 						{#each columns as col (col.key)}
