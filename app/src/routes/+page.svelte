@@ -24,6 +24,7 @@
 		loss: true
 	});
 	let live = $state(false);
+	let customOpen = $state(false);
 	let pins = $state<number[]>([]);
 	let mark = $state<number | null>(null);
 	/** Ranges we zoomed out of, so "Zoom out" is an undo rather than a guess. */
@@ -84,6 +85,9 @@
 
 	const atLatest = $derived(Math.abs(data.to - data.overview.end) < 12 * HOUR);
 	const isActivePreset = (id: string) => data.range === id;
+	// A custom (dragged/typed) window has no preset id — show the date pickers whenever
+	// one is active, or the user explicitly opened the panel to set one up.
+	const showCustom = $derived(customOpen || data.range === null);
 
 	const rangeLabel = $derived.by(() => {
 		const hours = span / HOUR;
@@ -227,6 +231,7 @@
 				{#each presets as p (p.id)}
 					<button class:on={isActivePreset(p.id)} onclick={() => preset(p.id)}>{p.label}</button>
 				{/each}
+				<button class:on={data.range === null} onclick={() => (customOpen = !customOpen)}>{m.custom()}</button>
 			</div>
 
 			<button class="btn live" class:live--on={live} onclick={() => (live = !live)} aria-pressed={live} title={m.live_hint()}>
@@ -260,28 +265,29 @@
 			to={data.to}
 			onselect={(f, t) => setRange(f, t, true)}
 		/>
-		<div class="navfoot">
-			<div class="daterange">
-				<input
-					type="datetime-local"
-					value={toLocalInput(data.from)}
-					onchange={(e) => {
-						const t = new Date(e.currentTarget.value).getTime();
-						if (!isNaN(t)) setRange(t, data.to, true);
-					}}
-				/>
-				<span class="sep" aria-hidden="true">–</span>
-				<input
-					type="datetime-local"
-					value={toLocalInput(data.to)}
-					onchange={(e) => {
-						const t = new Date(e.currentTarget.value).getTime();
-						if (!isNaN(t)) setRange(data.from, t, true);
-					}}
-				/>
+		{#if showCustom}
+			<div class="navfoot">
+				<div class="daterange">
+					<input
+						type="datetime-local"
+						value={toLocalInput(data.from)}
+						onchange={(e) => {
+							const t = new Date(e.currentTarget.value).getTime();
+							if (!isNaN(t)) setRange(t, data.to, true);
+						}}
+					/>
+					<span class="sep" aria-hidden="true">–</span>
+					<input
+						type="datetime-local"
+						value={toLocalInput(data.to)}
+						onchange={(e) => {
+							const t = new Date(e.currentTarget.value).getTime();
+							if (!isNaN(t)) setRange(data.from, t, true);
+						}}
+					/>
+				</div>
 			</div>
-			<span class="hint">{m.drag_timeline()}</span>
-		</div>
+		{/if}
 	</div>
 </header>
 

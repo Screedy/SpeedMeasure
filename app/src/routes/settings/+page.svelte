@@ -138,6 +138,12 @@
 					{:else}
 						<input type="hidden" name="interval" value={interval} />
 					{/if}
+
+					<div class="field field--tiny">
+						<label for="intervalTime">{m.interval_start()}</label>
+						<input id="intervalTime" name="time" type="time" value={data.settings.time} />
+					</div>
+					<p class="note">{m.interval_start_desc()}</p>
 				{:else}
 					<div class="field field--tiny">
 						<label for="time">{m.time_of_day()}</label>
