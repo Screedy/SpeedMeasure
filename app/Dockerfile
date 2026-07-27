@@ -17,7 +17,8 @@ RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 COPY --from=build /srv/build ./build
 COPY --from=build /srv/node_modules ./node_modules
 COPY --from=build /srv/package.json ./
+COPY app/migrate.mjs db/schema.sql ./
 
 USER node
 EXPOSE 3000
-CMD ["node", "build"]
+CMD ["sh", "-c", "node migrate.mjs && node build"]

@@ -46,6 +46,12 @@ Drop a `messages/<locale>.json` next to the existing ones and add the locale to
 `app/project.inlang/settings.json`. Dates, weekdays and months come from `Intl`, so they
 follow automatically. Currently ships English and Czech.
 
+## Changing the database schema
+
+[`db/schema.sql`](db/schema.sql) is the whole schema, and the app applies it on every
+boot before it starts serving. Upgrading a running instance is therefore just
+`docker compose up -d --build` — no manual `ALTER` on the server.
+
 ## Alerts
 
 Alerts are derived from the raw measurements on read (see

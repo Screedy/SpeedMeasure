@@ -35,3 +35,12 @@ CREATE TABLE IF NOT EXISTS alert_sent (
   id      text PRIMARY KEY,
   sent_at timestamptz NOT NULL DEFAULT now()
 );
+
+-- ---------------------------------------------------------------------------
+-- Columns added after a release. They appear in the CREATE TABLE above as well,
+-- so these are no-ops on a fresh database and are the only thing that does any
+-- work on an existing one. Append when you add a column; never remove a line.
+-- ---------------------------------------------------------------------------
+
+-- 0.1: excludes a bad reading from the chart, averages and alerts.
+ALTER TABLE measurement ADD COLUMN IF NOT EXISTS invalid boolean NOT NULL DEFAULT false;
