@@ -22,6 +22,7 @@
 	"error_password_mismatch": "The passwords do not match.",
 	"error_password_short": "Use at least 10 characters.",
 	"error_email_invalid": "Enter a valid email address.",
+	"error_unexpected": "Something went wrong and the request was not saved. Check your connection or reverse-proxy setup and try again.",
 
 	"speed_title": "Internet Speed",
 	"window": "Window",

@@ -5,6 +5,7 @@
 	import type { Alert } from '$shared/alerts.mjs';
 	import { DAY, HOUR, fmtClock, fmtDur, fmtWeekdayDate } from '$lib/format';
 	import { m } from '$lib/paraglide/messages';
+	import { toastErrors } from '$lib/formError';
 
 	let { data } = $props();
 
@@ -201,7 +202,7 @@
 				</button>
 			</div>
 			{#if open.length}
-				<form method="POST" action="?/ackAll" use:enhance class="ackall">
+				<form method="POST" action="?/ackAll" use:enhance={toastErrors} class="ackall">
 					<button class="btn" type="submit">
 						<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
 							<path d="M20 6L9 17l-5-5" />
@@ -249,7 +250,7 @@
 								<span class="mono alert__dur">· {fmtDur(alert.dur)}</span>
 							</span>
 						</button>
-						<form method="POST" action="?/toggleAck" use:enhance>
+						<form method="POST" action="?/toggleAck" use:enhance={toastErrors}>
 							<input type="hidden" name="id" value={alert.id} />
 							<button class="btn alert__ack" type="submit">{acked ? m.undo() : m.acknowledge()}</button>
 						</form>

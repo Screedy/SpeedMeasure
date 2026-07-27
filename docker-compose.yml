@@ -8,6 +8,18 @@ services:
   db:
     image: postgres:17-alpine
     restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - shared_buffers=32MB
+      - -c
+      - max_connections=30
+      - -c
+      - work_mem=2MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - effective_cache_size=256MB
     environment:
       POSTGRES_USER: speed
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}

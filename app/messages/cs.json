@@ -22,6 +22,7 @@
 	"error_password_mismatch": "Hesla se neshodují.",
 	"error_password_short": "Použijte alespoň 10 znaků.",
 	"error_email_invalid": "Zadejte platnou e-mailovou adresu.",
+	"error_unexpected": "Něco se nepovedlo a požadavek se neuložil. Zkontrolujte připojení nebo nastavení reverzní proxy a zkuste to znovu.",
 
 	"speed_title": "Rychlost internetu",
 	"window": "Okno",

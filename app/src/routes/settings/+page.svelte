@@ -3,6 +3,8 @@
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { m } from '$lib/paraglide/messages';
+	import { isUnexpectedError, toastErrors } from '$lib/formError';
+	import type { ActionResult } from '@sveltejs/kit';
 
 	let { data, form } = $props();
 
@@ -38,14 +40,22 @@
 	// the browser to reset back to) without Svelte ever seeing an input event. Every
 	// form below except the password one — clearing that after a save is the point —
 	// needs this to keep showing what was just saved.
-	const keepValues = () => async ({ update }: { update: (opts?: { reset?: boolean }) => Promise<void> }) =>
-		update({ reset: false });
+	const keepValues = () => async ({
+		result,
+		update
+	}: {
+		result: ActionResult;
+		update: (opts?: { reset?: boolean }) => Promise<void>;
+	}) => {
+		await update({ reset: false });
+		isUnexpectedError(result);
+	};
 </script>
 
 <header class="pagehead">
 	<div class="pagehead__title">
 		<h1>{m.settings_title()}</h1>
-		<form method="POST" action="?/signOut" use:enhance class="settings__signout">
+		<form method="POST" action="?/signOut" use:enhance={toastErrors} class="settings__signout">
 			<button class="btn" type="submit">{m.sign_out()}</button>
 		</form>
 	</div>
@@ -73,7 +83,7 @@
 			<div class="rule"></div>
 			<h3>{m.change_password()}</h3>
 
-			<form method="POST" action="?/savePassword" use:enhance>
+			<form method="POST" action="?/savePassword" use:enhance={toastErrors}>
 				<div class="form-grid pw-grid">
 					<div class="field form-grid__full">
 						<label for="pw-current">{m.current_password()}</label>
@@ -286,7 +296,7 @@
 				</div>
 			</form>
 
-			<form id="sendTestEmail" method="POST" action="?/sendTestEmail" use:enhance></form>
+			<form id="sendTestEmail" method="POST" action="?/sendTestEmail" use:enhance={toastErrors}></form>
 		</section>
 
 		<!-- ---------------------------------------------------------- guarantee -->

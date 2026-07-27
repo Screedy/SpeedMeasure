@@ -11,6 +11,7 @@
 	import { COLORS, DAY, HOUR, SERIES, fmtTime, num, toLocalInput, type SeriesKey } from '$lib/format';
 	import { m } from '$lib/paraglide/messages';
 	import { testStatus } from '$lib/testStatus.svelte';
+	import { isUnexpectedError } from '$lib/formError';
 
 	let { data } = $props();
 
@@ -243,8 +244,9 @@
 				action="?/runNow"
 				use:enhance={() => {
 					const sinceEnd = data.overview.end;
-					return async ({ update }) => {
+					return async ({ result, update }) => {
 						await update({ reset: false });
+						if (isUnexpectedError(result)) return;
 						awaitNewMeasurement(sinceEnd);
 					};
 				}}

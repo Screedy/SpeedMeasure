@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import { fmtTime, num } from '$lib/format';
 	import { m } from '$lib/paraglide/messages';
+	import { toastErrors } from '$lib/formError';
 
 	let { data } = $props();
 
@@ -93,7 +94,7 @@
 							<td class="mono n n--ping">{num(row.ping, 'ping')}</td>
 							<td class="mono n n--jitter">{num(row.jitter, 'jitter')}</td>
 							<td class="actions">
-								<form method="POST" action="?/toggleInvalid" use:enhance>
+								<form method="POST" action="?/toggleInvalid" use:enhance={toastErrors}>
 									<input type="hidden" name="t" value={row.t} />
 									<input type="hidden" name="provider" value={row.provider} />
 									<button class="btn" type="submit">{row.invalid ? m.unflag_invalid() : m.flag_invalid()}</button>

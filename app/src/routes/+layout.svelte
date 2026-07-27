@@ -4,6 +4,7 @@
 	import { setLocale, getLocale, locales } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import { testStatus } from '$lib/testStatus.svelte';
+	import Toast from '$lib/components/Toast.svelte';
 	import favicon from '$lib/assets/favicon.svg';
 
 	let { children, data } = $props();
@@ -96,3 +97,5 @@
 {:else}
 	{@render children()}
 {/if}
+
+<Toast />
