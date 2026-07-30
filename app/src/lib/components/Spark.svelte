@@ -14,7 +14,18 @@
 
 		// Thin out dense series — a 130px sparkline cannot show more than ~60 points.
 		const step = values.length > MAX_POINTS ? Math.ceil(values.length / MAX_POINTS) : 1;
-		const pts = values.filter((_, i) => i % step === 0);
+		const pts: number[] = [];
+		if (step === 1) {
+			pts.push(...values);
+		} else { // picking min/max in each step preserves the shape of the series better than just picking every Nth point
+			for (let i = 0; i < values.length; i += step) {
+				const chunk = values.slice(i, i + step);
+				const lo = Math.min(...chunk);
+				const hi = Math.max(...chunk);
+				if (chunk.indexOf(lo) <= chunk.indexOf(hi)) pts.push(lo, hi);
+				else pts.push(hi, lo);
+			}
+		}
 		if (pts.at(-1) !== values.at(-1)) pts.push(values.at(-1)!);
 
 		const x = (i: number) => PAD + (pts.length === 1 ? 0 : (i / (pts.length - 1)) * (W - 2 * PAD));
