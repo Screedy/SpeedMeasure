@@ -125,7 +125,7 @@
 	"custom_interval": "Custom interval (minutes)",
 	"time_of_day": "Time of day",
 	"interval_start": "Start at",
-	"interval_start_desc": "Tests land on this time plus multiples of the interval (e.g. 11:00, 11:30, 12:00…), so the schedule stays aligned instead of drifting later each cycle.",
+	"interval_start_desc": "Tests run at this time, then again every interval after it (e.g. 11:00, 11:30, 12:00…).",
 	"providers": "Provider",
 	"providers_desc": "Which speed test backend to run each cycle.",
 	"iperf_server": "iperf3 server (host or host:port)",

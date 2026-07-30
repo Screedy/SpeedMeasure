@@ -125,7 +125,7 @@
 	"custom_interval": "Vlastní interval (minuty)",
 	"time_of_day": "Denní doba",
 	"interval_start": "Začít v",
-	"interval_start_desc": "Testy se spouští v tomto čase a poté v násobcích intervalu (např. 11:00, 11:30, 12:00…), takže se rozvrh neposouvá s každým cyklem dál.",
+	"interval_start_desc": "Testy se spouští v tomto čase a poté znovu v každém dalším intervalu (např. 11:00, 11:30, 12:00…).",
 	"providers": "Poskytovatel",
 	"providers_desc": "Který měřicí nástroj spouštět v každém cyklu.",
 	"iperf_server": "iperf3 server (host nebo host:port)",
