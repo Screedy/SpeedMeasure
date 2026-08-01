@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
 import { sql } from '$lib/server/db';
-import { isSortKey, loadBuckets, loadOverview, loadRows, type SortKey } from '$lib/server/data';
+import { isSortKey, loadBuckets, loadLatest, loadOverview, loadRows, type SortKey } from '$lib/server/data';
 
 const DAY = 864e5;
 const PAGE_SIZE = 12;
@@ -58,7 +58,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const desc = (url.searchParams.get('dir') ?? 'desc') === 'desc';
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
 
-	const [buckets, table] = await Promise.all([
+	const [buckets, table, latest] = await Promise.all([
 		loadBuckets(new Date(from), new Date(to)),
 		loadRows({
 			from: new Date(from),
@@ -68,7 +68,8 @@ export const load: PageServerLoad = async ({ url }) => {
 			desc,
 			offset: (page - 1) * PAGE_SIZE,
 			limit: PAGE_SIZE
-		})
+		}),
+		loadLatest(new Date(from), new Date(to))
 	]);
 
 	return {
@@ -77,6 +78,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		to,
 		range,
 		buckets,
+		latest,
 		query,
 		sortKey,
 		desc,

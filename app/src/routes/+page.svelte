@@ -146,8 +146,9 @@
 	const cards = $derived(
 		SERIES.map((s) => {
 			const values = data.buckets.map((b) => b[s.key]);
-			const last = values.at(-1) ?? 0;
 			const avg = values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+			const last = data.latest ? data.latest[s.key] : (values.at(-1) ?? 0);
+			const sparkValues = data.latest && values.length ? [...values.slice(0, -1), last] : values;
 			const diff = avg ? ((last - avg) / avg) * 100 : 0;
 			// Throughput is better when higher; latency, jitter and loss when lower.
 			const higherIsBetter = s.key === 'download' || s.key === 'upload';
@@ -160,7 +161,7 @@
 				avg: `${num(avg, s.key)} ${s.unit}`,
 				diff,
 				deltaColor: Math.abs(diff) < 1 ? 'var(--fg-4)' : better ? 'var(--download)' : 'var(--loss)',
-				values
+				values: sparkValues
 			};
 		})
 	);

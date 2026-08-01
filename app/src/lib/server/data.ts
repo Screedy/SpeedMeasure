@@ -64,6 +64,21 @@ export async function loadBuckets(from: Date, to: Date): Promise<Bucket[]> {
 	return rows.map((r) => ({ ...toPoint(r), count: r.count }));
 }
 
+/**
+ * The single most recent raw measurement in the range — the stat cards' headline number
+ * must always be an actual test result.
+ */
+export async function loadLatest(from: Date, to: Date): Promise<Point | null> {
+	const [row] = await sql`
+		SELECT time AS t, download_mbps AS download, upload_mbps AS upload,
+		       ping_ms AS ping, jitter_ms AS jitter, loss_pct AS loss
+		FROM measurement
+		WHERE time >= ${from} AND time <= ${to} AND NOT invalid
+		ORDER BY time DESC
+		LIMIT 1`;
+	return row ? toPoint(row) : null;
+}
+
 /** Coarse full-history series behind the navigator strip. */
 export async function loadOverview(): Promise<{
 	series: { t: number; download: number }[];
