@@ -65,6 +65,12 @@ already been emailed are persisted (`alert_ack`, `alert_sent`). Three kinds:
 
 With SMTP configured, the runner emails each new alert once.
 
+## Commit messages
+
+`type(scope): summary`,  e.g. `fix(sparkline): preserve spikes when
+thinning stat-card graphs`. Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `ci`, `test`.
+Scope is whatever's most specific (a route, a service, a component).
+
 ## Development
 
 ```sh
