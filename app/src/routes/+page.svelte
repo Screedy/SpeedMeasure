@@ -41,7 +41,9 @@
 	};
 	// --- navigation ----------------------------------------------------------
 
-	/** All view state lives in the URL, so a window is a link and back/forward just work. */
+	/** All view state lives in the URL, so a window is a link and back/forward just work.
+	 * (A bare `/` still remembers the last window — see parseRange in +page.server.ts — but
+	 * that happens server-side before the response is sent, not by rewriting this URL.) */
 	function navigate(params: Record<string, string | number | null>) {
 		const url = new URL(page.url);
 		for (const [k, v] of Object.entries(params)) {

@@ -1,9 +1,13 @@
+import type { Cookies } from '@sveltejs/kit';
+import { env } from '$env/dynamic/private';
 import type { Actions, PageServerLoad } from './$types';
 import { sql } from '$lib/server/db';
 import { isSortKey, loadBuckets, loadLatest, loadOverview, loadRows, type SortKey } from '$lib/server/data';
 
 const DAY = 864e5;
+const YEAR = 365 * DAY;
 const PAGE_SIZE = 12;
+const WINDOW_COOKIE = 'sm_window';
 
 /** Preset window lengths, keyed by the `range` URL param. `null` means "all history". */
 const RANGE_PRESETS: Record<string, number | null> = {
@@ -14,43 +18,73 @@ const RANGE_PRESETS: Record<string, number | null> = {
 	all: null
 };
 
+function presetWindow(id: string, overview: { start: number; end: number }) {
+	const ms = RANGE_PRESETS[id];
+	const to = overview.end;
+	const from = ms === null ? overview.start : Math.max(overview.start, to - ms);
+	const range = ms !== null && from === overview.start ? 'all' : id;
+	
+	return { from, to, range };
+}
+
+function rememberWindow(cookies: Cookies, value: string) {
+	cookies.set(WINDOW_COOKIE, value, {
+		path: '/',
+		httpOnly: true,
+		sameSite: 'lax',
+		secure: !env.INSECURE_COOKIES,
+		maxAge: YEAR / 1000
+	});
+}
+
 /**
- * Reads the view state out of the URL, so every window is a shareable, reloadable link.
+ * Reads the view state out of the URL, so every window is a shareable, reloadable link —
+ * editing `range`, `from` or `to` by hand and reloading always wins, exactly as typed.
  *
  * A preset (`range=3d` etc.) is a rolling window — re-derived from the current overview
  * on every load, so new measurements keep showing up without the user re-clicking it.
  * An explicit `from`/`to` (typed dates, or a drag on the navigator) is a deliberate,
  * absolute window and stays pinned exactly where the user put it.
  *
- * The default (no url params at all) is the same rolling behavior as a 3-day preset,
- * clamped to the real data range — a new app with only a few hours of history should
- * default to showing all of it, not a mostly empty 3-day window with the actual tests
- * squeezed into one corner.
+ * Only when the URL has neither does the *last* window get remembered — in a cookie, not
+ * by rewriting the URL, so a bare `/` (the rail's "Speed" link) renders whatever you had
+ * last instead of always resetting to 3d, without a client-side redirect flickering the
+ * default first or fighting a URL you're editing by hand.
  */
-function parseRange(url: URL, overview: { start: number; end: number }) {
+function parseRange(url: URL, overview: { start: number; end: number }, cookies: Cookies) {
 	const rangeParam = url.searchParams.get('range');
 	const hasExplicitWindow = url.searchParams.has('from') || url.searchParams.has('to');
-	const presetId = rangeParam && rangeParam in RANGE_PRESETS ? rangeParam : hasExplicitWindow ? null : '3d';
 
-	if (presetId) {
-		const ms = RANGE_PRESETS[presetId];
-		const to = overview.end;
-		const from = ms === null ? overview.start : Math.max(overview.start, to - ms);
-		// Clamping pulled `from` back to the true start — the effective window is "all
-		// history" regardless of which preset asked for it, so label it that way and let
-		// the right button highlight, matching what's actually on screen.
-		const range = ms !== null && from === overview.start ? 'all' : presetId;
-		return { from, to, range };
+	if (hasExplicitWindow) {
+		const to = Number(url.searchParams.get('to')) || overview.end;
+		const from = Number(url.searchParams.get('from')) || Math.max(overview.start, to - 3 * DAY);
+		const win = { from: Math.min(from, to), to: Math.max(from, to), range: null };
+		
+		rememberWindow(cookies, `${win.from},${win.to}`);
+		
+		return win;
 	}
 
-	const to = Number(url.searchParams.get('to')) || overview.end;
-	const from = Number(url.searchParams.get('from')) || Math.max(overview.start, to - 3 * DAY);
-	return { from: Math.min(from, to), to: Math.max(from, to), range: null };
+	if (rangeParam && rangeParam in RANGE_PRESETS) {
+		rememberWindow(cookies, rangeParam);
+		
+		return presetWindow(rangeParam, overview);
+	}
+
+	// Nothing in the URL — fall back to what was last remembered, then to 3d.
+	const saved = cookies.get(WINDOW_COOKIE);
+	const [savedFrom, savedTo] = saved?.split(',').map(Number) ?? [];
+
+	if (Number.isFinite(savedFrom) && Number.isFinite(savedTo)) {
+		return { from: savedFrom, to: Math.max(savedFrom, savedTo), range: null };
+	}
+
+	return presetWindow(saved && saved in RANGE_PRESETS ? saved : '3d', overview);
 }
 
-export const load: PageServerLoad = async ({ url }) => {
+export const load: PageServerLoad = async ({ url, cookies }) => {
 	const overview = await loadOverview();
-	const { from, to, range } = parseRange(url, overview);
+	const { from, to, range } = parseRange(url, overview, cookies);
 
 	const query = url.searchParams.get('q') ?? '';
 	const sortParam = url.searchParams.get('sort') ?? 't';
