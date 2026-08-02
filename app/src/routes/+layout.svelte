@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../styles/index.css';
 	import { page } from '$app/state';
+	import { invalidateAll } from '$app/navigation';
 	import { setLocale, getLocale, locales } from '$lib/paraglide/runtime';
 	import { m } from '$lib/paraglide/messages';
 	import { testStatus } from '$lib/testStatus.svelte';
@@ -17,6 +18,13 @@
 
 	const isActive = (href: string) =>
 		href === '/' ? page.url.pathname === '/' : page.url.pathname.startsWith(href);
+
+	// Clicking a nav link to the route you're already on doesn't change the URL, so
+	// SvelteKit's router treats it as a no-op and never re-runs that route's load — the
+	// page just keeps showing whatever it last fetched. Force it explicitly.
+	function refreshIfCurrent(href: string) {
+		if (isActive(href)) invalidateAll();
+	}
 </script>
 
 <svelte:head>
@@ -43,7 +51,8 @@
 
 			<nav class="rail__nav">
 				{#each nav as item (item.href)}
-					<a class="navitem" class:navitem--active={isActive(item.href)} href={item.href} title={item.label}>
+					<a class="navitem" class:navitem--active={isActive(item.href)} href={item.href}
+						title={item.label} onclick={() => refreshIfCurrent(item.href)}>
 						{#if item.badge}
 							<span class="navitem__badge">{item.badge > 9 ? '9+' : item.badge}</span>
 						{/if}
@@ -66,7 +75,8 @@
 			</nav>
 
 			<div class="rail__foot">
-				<a class="navitem" class:navitem--active={isActive('/settings')} href="/settings" title={m.nav_settings()} style="width:100%">
+				<a class="navitem" class:navitem--active={isActive('/settings')} href="/settings" title={m.nav_settings()}
+					style="width:100%" onclick={() => refreshIfCurrent('/settings')}>
 					<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
 						<circle cx="12" cy="12" r="3" />
 						<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
