@@ -1,6 +1,7 @@
 <script lang="ts">
 	import '../../styles/chart.css';
 	import { niceMax } from '$lib/format';
+	import { m } from '$lib/paraglide/messages';
 
 	let {
 		samples,
@@ -53,7 +54,7 @@
 </script>
 
 <div class="chart">
-	<svg viewBox="0 0 {VBW} {VBH}" width="100%" preserveAspectRatio="none" role="img" aria-label="Throughput over time">
+	<svg viewBox="0 0 {VBW} {VBH}" width="100%" preserveAspectRatio="none" role="img" aria-label={m.iperf_chart_label()}>
 		{#each gridRows as row, i (i)}
 			<line x1={PAD.l} x2={PAD.l + plotW} y1={row.y} y2={row.y} stroke={row.last ? 'var(--border-3)' : '#1a2029'} stroke-width="1" />
 			<text x={PAD.l - 9} y={row.y + 3.5} text-anchor="end" class="tick">{row.label}</text>
@@ -62,7 +63,7 @@
 
 		{#if linkY !== null}
 			<line x1={PAD.l} x2={PAD.l + plotW} y1={linkY} y2={linkY} stroke="var(--border-4)" stroke-width="1" stroke-dasharray="5 4" />
-			<text x={PAD.l + plotW} y={linkY - 5} text-anchor="end" class="tick tick--sm">link capacity</text>
+			<text x={PAD.l + plotW} y={linkY - 5} text-anchor="end" class="tick tick--sm">{m.iperf_link_capacity()}</text>
 		{/if}
 
 		{#each xTicks as sec (sec)}

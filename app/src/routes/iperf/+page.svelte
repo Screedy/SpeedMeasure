@@ -2,14 +2,17 @@
 	import '../../styles/iperf.css';
 	import { untrack } from 'svelte';
 	import { invalidateAll, goto } from '$app/navigation';
+	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
 	import type { ActionResult } from '@sveltejs/kit';
 	import IperfChart from '$lib/components/IperfChart.svelte';
 	import { m } from '$lib/paraglide/messages';
 	import { isUnexpectedError, toastErrors } from '$lib/formError';
-	import type { Direction, Protocol, TcpResult, UdpResult } from '$lib/server/iperf';
+	import type { Direction, Protocol } from '$lib/server/iperf';
 
-	let { data } = $props();
+	let { data, form } = $props();
+
+	const errorIn = (section: string) => (form?.section === section ? form?.error : null);
 
 	// --- target selection -----------------------------------------------------
 	
@@ -64,9 +67,30 @@
 
 	function fmtRate(mbps: number | null | undefined) {
 		if (mbps == null) return '—';
-		
+
 		return mbps >= 1000 ? `${(mbps / 1000).toFixed(2)} Gbps` : `${mbps.toFixed(1)} Mbps`;
 	}
+
+	/** Short status word for the history list — statusText below is the longer,
+	 * live-progress version for the run panel (needs samples/duration that history
+	 * rows don't carry). */
+	const STATUS_LABEL: Record<string, () => string> = {
+		pending: m.iperf_starting,
+		running: m.status_running,
+		done: m.status_done,
+		error: m.iperf_failed,
+		stopped: m.iperf_stopped
+	};
+
+	function navigate(params: Record<string, string | number | null>) {
+		const url = new URL(page.url);
+		for (const [k, v] of Object.entries(params)) {
+			if (v === null || v === '') url.searchParams.delete(k);
+			else url.searchParams.set(k, String(v));
+		}
+		goto(url, { replaceState: true, keepFocus: true, noScroll: true });
+	}
+	const totalHistoryPages = $derived(Math.max(1, Math.ceil(data.historyTotal / data.historyPageSize)));
 
 	const statusText = $derived.by(() => {
 		if (!run) return m.iperf_ready();
@@ -83,26 +107,22 @@
 		const r = run?.result;
 		if (!r) return [];
 		if (r.proto === 'udp') {
-			const u = r as UdpResult;
-			
 			return [
-				{ label: m.iperf_bitrate(), value: fmtRate(u.receiver), color: 'var(--download)' },
-				{ label: m.series_jitter(), value: u.jitterMs != null ? `${u.jitterMs.toFixed(3)} ms` : '—', color: 'var(--jitter)' },
+				{ label: m.iperf_bitrate(), value: fmtRate(r.receiver), color: 'var(--download)' },
+				{ label: m.series_jitter(), value: r.jitterMs != null ? `${r.jitterMs.toFixed(3)} ms` : '—', color: 'var(--jitter)' },
 				{
 					label: m.series_loss(),
-					value: u.lossPct != null ? `${u.lossPct.toFixed(2)}%` : '—',
-					color: u.lossPct && u.lossPct > 1 ? 'var(--loss)' : 'var(--download)'
+					value: r.lossPct != null ? `${r.lossPct.toFixed(2)}%` : '—',
+					color: r.lossPct && r.lossPct > 1 ? 'var(--loss)' : 'var(--download)'
 				},
-				{ label: m.iperf_datagrams_lost(), value: u.lost != null ? `${u.lost} / ${u.total}` : '—', color: 'var(--upload)' }
+				{ label: m.iperf_datagrams_lost(), value: r.lost != null ? `${r.lost} / ${r.total}` : '—', color: 'var(--upload)' }
 			];
 		}
-		const t = r as TcpResult;
-		
 		return [
-			{ label: m.iperf_sender(), value: fmtRate(t.sender), color: 'var(--download)' },
-			{ label: m.iperf_receiver(), value: fmtRate(t.receiver), color: 'var(--upload)' },
-			{ label: m.iperf_retransmits(), value: String(t.retr), color: t.retr > 0 ? 'var(--ping)' : 'var(--download)' },
-			{ label: m.iperf_cwnd(), value: t.cwndMB != null ? `${t.cwndMB.toFixed(2)} MB` : '—', color: 'var(--ping)' }
+			{ label: m.iperf_sender(), value: fmtRate(r.sender), color: 'var(--download)' },
+			{ label: m.iperf_receiver(), value: fmtRate(r.receiver), color: 'var(--upload)' },
+			{ label: m.iperf_retransmits(), value: String(r.retr), color: r.retr > 0 ? 'var(--ping)' : 'var(--download)' },
+			{ label: m.iperf_cwnd(), value: r.cwndMB != null ? `${r.cwndMB.toFixed(2)} MB` : '—', color: 'var(--ping)' }
 		];
 	});
 
@@ -168,6 +188,16 @@
 	</div>
 </header>
 
+{#snippet binIcon()}
+	<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+		<path d="M4 7h16" />
+		<path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+		<path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
+		<path d="M10 11v6" />
+		<path d="M14 11v6" />
+	</svg>
+{/snippet}
+
 <div class="scrollbody">
 	<div class="iperf-grid">
 		<div class="iperf-col">
@@ -175,7 +205,7 @@
 			<section class="panel iperf-card">
 				<div class="iperf-card__head">
 					<h2>{m.target_node()}</h2>
-					<span class="hint">iperf3 -s on host</span>
+					<span class="hint">{m.iperf_s_hint()}</span>
 				</div>
 				<div class="node-list">
 					{#each data.targets as t (t.id)}
@@ -194,14 +224,12 @@
 								<div class="node-row__addr">{t.host}:{t.port}</div>
 							</div>
 							<span class="tag">{capLabel(t.linkMbps)}</span>
-							{#if data.targets.length > 1}
-								<form method="POST" action="?/removeTarget" use:enhance={toastErrors}>
-									<input type="hidden" name="id" value={t.id} />
-									<button type="submit" class="node-row__delete" title={m.remove_target()} onclick={(e) => e.stopPropagation()}>
-										<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
-									</button>
-								</form>
-							{/if}
+							<form method="POST" action="?/removeTarget" use:enhance={toastErrors}>
+								<input type="hidden" name="id" value={t.id} />
+								<button type="submit" class="node-row__delete" title={m.remove_target()} onclick={(e) => e.stopPropagation()}>
+									{@render binIcon()}
+								</button>
+							</form>
 						</div>
 					{:else}
 						<div class="hint" style="padding:6px 2px">{m.no_targets()}</div>
@@ -223,6 +251,7 @@
 						{/each}
 					</div>
 					<button type="submit" class="btn">+ {m.add_target()}</button>
+					{#if errorIn('target')}<span class="error">{errorIn('target')}</span>{/if}
 				</form>
 			</section>
 
@@ -295,6 +324,7 @@
 						</form>
 					{/if}
 				</div>
+				{#if errorIn('run')}<span class="error">{errorIn('run')}</span>{/if}
 
 				<div class="progressrow">
 					<div class="progressbar"><div class="progressbar__fill" style:width="{progressPct}%"></div></div>
@@ -351,18 +381,27 @@
 								<div class="history-row__stats">
 									<div class="history-row__rate">{fmtRate(h.result?.receiver)}</div>
 									<div class="hint mono">
-										{h.status === 'error' ? m.iperf_failed() : h.status === 'stopped' ? m.iperf_stopped() : h.status}
+										{STATUS_LABEL[h.status]?.() ?? h.status}
 									</div>
 								</div>
 								<form method="POST" action="?/deleteRun" use:enhance={toastErrors}>
 									<input type="hidden" name="id" value={h.id} />
 									<button type="submit" class="node-row__delete" title={m.delete_run()} onclick={(e) => e.stopPropagation()}>
-										<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V6" /></svg>
+										{@render binIcon()}
 									</button>
 								</form>
 							</a>
 						{/each}
 					</div>
+					{#if data.historyTotal > data.historyPageSize}
+						<div class="pager">
+							<span class="hint">{m.page_label({ page: data.historyPage, pages: totalHistoryPages, shown: data.history.length })}</span>
+							<div class="pager__buttons">
+								<button class="btn" disabled={data.historyPage <= 1} onclick={() => navigate({ page: data.historyPage - 1 })}>{m.prev()}</button>
+								<button class="btn" disabled={data.historyPage >= totalHistoryPages} onclick={() => navigate({ page: data.historyPage + 1 })}>{m.next()}</button>
+							</div>
+						</div>
+					{/if}
 				{/if}
 			</section>
 		</div>

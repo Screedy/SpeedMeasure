@@ -373,3 +373,17 @@ input.addtarget__port {
 	font-family: var(--mono);
 	color: var(--download-2);
 }
+
+.pager {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 12px;
+	margin-top: 4px;
+	border-top: 1px solid var(--border);
+}
+
+.pager__buttons {
+	display: flex;
+	gap: 8px;
+}

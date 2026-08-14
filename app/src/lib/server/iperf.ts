@@ -85,16 +85,25 @@ export async function removeTarget(id: string) {
 }
 
 /** Everything but the (possibly large) transcript — enough for the history list. */
-export async function listRuns(limit: number): Promise<Omit<IperfRun, 'term' | 'samples'>[]> {
-	const rows = await sql`
-		SELECT id, target_name, target_host, target_port, direction, protocol, duration,
-		       streams, status, result, error, created_at
-		FROM iperf_run ORDER BY created_at DESC LIMIT ${limit}`;
-	
-		return rows.map((r) => {
-		const { term: _term, samples: _samples, ...rest } = toRun({ ...r, term: '', samples: [] });
-		return rest;
-	});
+export async function listRuns(
+	limit: number,
+	offset: number
+): Promise<{ rows: Omit<IperfRun, 'term' | 'samples'>[]; total: number }> {
+	const [rows, [{ count }]] = await Promise.all([
+		sql`
+			SELECT id, target_name, target_host, target_port, direction, protocol, duration,
+			       streams, status, result, error, created_at
+			FROM iperf_run ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`,
+		sql`SELECT count(*)::int FROM iperf_run`
+	]);
+
+	return {
+		rows: rows.map((r) => {
+			const { term: _term, samples: _samples, ...rest } = toRun({ ...r, term: '', samples: [] });
+			return rest;
+		}),
+		total: count
+	};
 }
 
 export async function getRun(id: string): Promise<IperfRun | null> {

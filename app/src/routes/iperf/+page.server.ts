@@ -13,9 +13,11 @@ import {
 	type Direction,
 	type Protocol
 } from '$lib/server/iperf';
+import { m } from '$lib/paraglide/messages';
 
 const DIRECTIONS: Direction[] = ['down', 'up', 'bidir'];
 const PROTOCOLS: Protocol[] = ['tcp', 'udp'];
+const HISTORY_PAGE_SIZE = 6;
 
 const str = (form: FormData, key: string) => String(form.get(key) ?? '').trim();
 
@@ -34,13 +36,21 @@ const oneOf = <T extends string>(form: FormData, key: string, options: T[], fall
 
 export const load: PageServerLoad = async ({ url }) => {
 	const runId = url.searchParams.get('run');
+	const historyPage = Math.max(1, Number(url.searchParams.get('page')) || 1);
 	const [targets, displayedRun, history] = await Promise.all([
 		listTargets(),
 		runId ? getRun(runId) : getLatestRun(),
-		listRuns(20)
+		listRuns(HISTORY_PAGE_SIZE, (historyPage - 1) * HISTORY_PAGE_SIZE)
 	]);
-	
-	return { targets, displayedRun, history };
+
+	return {
+		targets,
+		displayedRun,
+		history: history.rows,
+		historyTotal: history.total,
+		historyPage,
+		historyPageSize: HISTORY_PAGE_SIZE
+	};
 };
 
 export const actions: Actions = {
@@ -48,7 +58,7 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const host = str(form, 'host');
 		
-		if (!host) return fail(400, { section: 'target', error: 'Host is required' });
+		if (!host) return fail(400, { section: 'target', error: m.error_host_required() });
 
 		const name = str(form, 'name') || host;
 		const port = int(form, 'port', 1, 65535, 5201);
@@ -68,7 +78,7 @@ export const actions: Actions = {
 		const form = await request.formData();
 		const targetHost = str(form, 'targetHost');
 		
-		if (!targetHost) return fail(400, { section: 'run', error: 'Pick a target first' });
+		if (!targetHost) return fail(400, { section: 'run', error: m.error_pick_target() });
 
 		const id = await createRun({
 			targetName: str(form, 'targetName') || targetHost,
