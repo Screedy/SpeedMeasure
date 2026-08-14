@@ -36,6 +36,37 @@ CREATE TABLE IF NOT EXISTS alert_sent (
   sent_at timestamptz NOT NULL DEFAULT now()
 );
 
+-- Saved iperf3 nodes for on-demand ad-hoc testing (see runner/iperf.mjs)
+CREATE TABLE IF NOT EXISTS iperf_target (
+  id         text PRIMARY KEY,
+  name       text NOT NULL,
+  host       text NOT NULL,
+  port       int  NOT NULL DEFAULT 5201,
+  link_mbps  int,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+-- One row per manual test run. `target_*` is a snapshot, not a foreign key.
+-- Run stays readable after its target is deleted. `term`/`samples` fill in
+-- live while status is 'running'; the browser polls until it isn't.
+CREATE TABLE IF NOT EXISTS iperf_run (
+  id          text PRIMARY KEY,
+  target_name text NOT NULL,
+  target_host text NOT NULL,
+  target_port int  NOT NULL,
+  direction   text NOT NULL,
+  protocol    text NOT NULL,
+  duration    int  NOT NULL,
+  streams     int  NOT NULL,
+  status      text NOT NULL DEFAULT 'pending',
+  term        text NOT NULL DEFAULT '',
+  samples     jsonb NOT NULL DEFAULT '[]',
+  result      jsonb,
+  error       text,
+  created_at  timestamptz NOT NULL DEFAULT now(),
+  finished_at timestamptz
+);
+
 -- ---------------------------------------------------------------------------
 -- Columns added after a release. They appear in the CREATE TABLE above as well,
 -- so these are no-ops on a fresh database and are the only thing that does any

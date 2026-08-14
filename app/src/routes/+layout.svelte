@@ -12,6 +12,7 @@
 
 	const nav = $derived([
 		{ href: '/', label: m.nav_speed(), icon: 'speed', badge: 0 },
+		{ href: '/iperf', label: m.nav_iperf(), icon: 'iperf', badge: 0 },
 		{ href: '/alerts', label: m.nav_alerts(), icon: 'alerts', badge: data.openAlerts },
 		{ href: '/log', label: m.nav_log(), icon: 'log', badge: 0 }
 	]);
@@ -59,6 +60,10 @@
 						{#if item.icon === 'speed'}
 							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round">
 								<path d="M3 15l4-5 4 3 5-7 5 6" /><path d="M3 20h18" />
+							</svg>
+						{:else if item.icon === 'iperf'}
+							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+								<rect x="3" y="4" width="18" height="6" rx="1.5" /><rect x="3" y="14" width="18" height="6" rx="1.5" /><path d="M7 7h.01" /><path d="M7 17h.01" />
 							</svg>
 						{:else if item.icon === 'alerts'}
 							<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">

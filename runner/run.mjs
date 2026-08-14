@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import { computeAlerts, inBreach, fmtDur, DEFAULT_SETTINGS } from './shared/alerts.mjs';
 import { providers } from './providers.mjs';
 import { nextDelayMs } from './schedule.mjs';
+import { listenIperf } from './iperf.mjs';
 
 const sql = postgres(process.env.DATABASE_URL, { onnotice: () => {} });
 
@@ -169,6 +170,9 @@ async function main() {
 			log('test email failed:', err.message);
 		}
 	});
+	// Ad-hoc iperf3 node testing — independent listeners, runs concurrently with
+	// the measurement loop below rather than sharing its wake/sleep cycle.
+	await listenIperf(sql);
 
 	for (;;) {
 		const settings = await loadSettings();
