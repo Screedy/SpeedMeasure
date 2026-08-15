@@ -37,6 +37,7 @@ services:
       - '5432'
 
   app:
+    image: screedy/speedmeasure-app:latest
     build:
       context: .
       dockerfile: app/Dockerfile
@@ -54,6 +55,7 @@ services:
         condition: service_healthy
 
   runner:
+    image: screedy/speedmeasure-runner:latest
     build:
       context: .
       dockerfile: runner/Dockerfile

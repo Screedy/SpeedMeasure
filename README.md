@@ -14,18 +14,15 @@
 
 ## Quick start
 
-1. *Get the source code*: clone with git, or download and unzip:
+1. *Get the compose file and the config template*:
 
    ```sh
-   git clone https://github.com/Screedy/SpeedMeasure.git
-   cd SpeedMeasure
+   mkdir speedmeasure && cd speedmeasure
+   curl -O https://raw.githubusercontent.com/Screedy/SpeedMeasure/master/docker-compose.yml
+   curl -o .env https://raw.githubusercontent.com/Screedy/SpeedMeasure/master/.env.example
    ```
 
-2. *Create your config from the template*:
-
-   ```sh
-   cp .env.example .env
-   ```
+2. *Fill in your config*:
 
    Open `.env` and set `POSTGRES_PASSWORD` and `SESSION_SECRET` — generate each with:
 
@@ -34,16 +31,27 @@
    ```
 
    Leave everything else at its default if you're just trying this out on
-   `localhost:8080`. Putting the app behind a reverse proxy or reachable by a LAN IP requires to set `ORIGIN` in `.env` to match exactly how you'll reach it (SvelteKit
-   rejects every form submission if the request's origin doesn't match what's configured).
+   `localhost:8080`. Putting the app behind a reverse proxy or reachable by a LAN IP requires setting `ORIGIN` in `.env` to match exactly how you'll reach it.
 
-3. Start:
+3. Start — this pulls straight from Docker Hub:
 
    ```sh
    docker compose up -d
    ```
 
 4. Open <http://localhost:8080>.
+
+### Build from source
+
+Clone the repo and pass `--build` — same compose file, same image tags, so
+nothing downstream changes:
+
+```sh
+git clone https://github.com/Screedy/SpeedMeasure.git
+cd SpeedMeasure
+cp .env.example .env   # same config as above
+docker compose up -d --build
+```
 
 ## Features
 
