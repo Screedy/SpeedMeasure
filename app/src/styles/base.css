@@ -24,7 +24,7 @@ a {
 }
 
 a:hover {
-	color: #79b8ff;
+	color: var(--upload-2);
 }
 
 input,

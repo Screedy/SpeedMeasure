@@ -15,9 +15,12 @@
 	--fg: #e6edf3;
 	--fg-2: #c9d1d9;
 	--fg-3: #8b949e;
-	--fg-4: #5b6472;
-	--fg-5: #4d5563;
-	--fg-6: #3d4552;
+	--fg-4: #7b8694;
+	/* No headroom for a third distinct "dim" tier and still clear 4.5:1 on --bg-rail
+	   (the darkest bg token) — alias rather than ship a near-duplicate that reads
+	   identically but drifts if --fg-4 ever changes. */
+	--fg-5: var(--fg-4);
+	--fg-6: #747f8e;
 
 	--accent: #2dd4bf;
 	--accent-2: #5eead4;

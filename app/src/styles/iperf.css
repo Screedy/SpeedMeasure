@@ -208,7 +208,7 @@ input.addtarget__port {
 
 .iperf-run-btn--stop {
 	background: var(--danger-bg);
-	color: #f8918c;
+	color: var(--danger-fg);
 	border-color: var(--danger-line);
 }
 

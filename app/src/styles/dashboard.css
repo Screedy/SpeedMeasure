@@ -234,7 +234,6 @@
 	border-color: transparent;
 	background: transparent;
 	color: var(--fg-5);
-	opacity: 0.55;
 }
 
 .legend__dot {

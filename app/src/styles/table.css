@@ -112,7 +112,6 @@
 }
 
 .datatable tr.row--invalid {
-	opacity: 0.5;
 	box-shadow: inset 3px 0 0 var(--loss);
 }
 
