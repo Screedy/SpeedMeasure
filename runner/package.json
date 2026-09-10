@@ -7,7 +7,7 @@
 		"test": "node --test"
 	},
 	"dependencies": {
-		"nodemailer": "^9.0.1",
+		"nodemailer": "^9.1.1",
 		"postgres": "^3.4.7"
 	}
 }
