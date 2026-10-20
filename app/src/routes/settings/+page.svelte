@@ -3,7 +3,7 @@
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
 	import { m } from '#lib/paraglide/messages.js';
-	import { isUnexpectedError, toastErrors } from '#lib/formError.ts';
+	import { isUnexpectedError, STAY, toastErrors } from '#lib/formError.ts';
 	import type { ActionResult } from '$app/forms';
 
 	let { data, form } = $props();
@@ -45,9 +45,9 @@
 		update
 	}: {
 		result: ActionResult;
-		update: (opts?: { reset?: boolean }) => Promise<void>;
+		update: (opts?: { reset?: boolean; navigate?: boolean }) => Promise<void>;
 	}) => {
-		await update({ reset: false });
+		await update({ reset: false, ...STAY });
 		isUnexpectedError(result);
 	};
 </script>

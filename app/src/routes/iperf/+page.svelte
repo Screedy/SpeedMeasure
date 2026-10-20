@@ -7,7 +7,7 @@
 	import type { ActionResult } from '$app/forms';
 	import IperfChart from '#lib/components/IperfChart.svelte';
 	import { m } from '#lib/paraglide/messages.js';
-	import { isUnexpectedError, toastErrors } from '#lib/formError.ts';
+	import { isUnexpectedError, STAY, toastErrors } from '#lib/formError.ts';
 	import type { Direction, Protocol } from '#lib/server/iperf.ts';
 
 	let { data, form } = $props();
@@ -168,9 +168,9 @@
 			update
 		}: {
 			result: ActionResult;
-			update: (opts?: { reset?: boolean }) => Promise<void>;
+			update: (opts?: { reset?: boolean; navigate?: boolean }) => Promise<void>;
 		}) => {
-			await update({ reset: false });
+			await update({ reset: false, ...STAY });
 			if (isUnexpectedError(result)) return;
 			if (result.type === 'success' && result.data?.runId) {
 				await goto(`?run=${result.data.runId}`, { replace: true, reset: false });
