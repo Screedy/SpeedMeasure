@@ -1,8 +1,8 @@
 import type { Cookies } from '@sveltejs/kit';
-import { env } from '$env/dynamic/private';
+import { INSECURE_COOKIES } from '$app/env/private';
 import type { Actions, PageServerLoad } from './$types';
-import { sql } from '$lib/server/db';
-import { isSortKey, loadBuckets, loadLatest, loadOverview, loadRows, type SortKey } from '$lib/server/data';
+import { sql } from '#lib/server/db.ts';
+import { isSortKey, loadBuckets, loadLatest, loadOverview, loadRows, type SortKey } from '#lib/server/data.ts';
 
 const DAY = 864e5;
 const YEAR = 365 * DAY;
@@ -32,7 +32,7 @@ function rememberWindow(cookies: Cookies, value: string) {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		secure: !env.INSECURE_COOKIES,
+		secure: !INSECURE_COOKIES,
 		maxAge: YEAR / 1000
 	});
 }

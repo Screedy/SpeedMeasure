@@ -1,5 +1,5 @@
 import type { RequestHandler } from './$types';
-import { streamCsv } from '$lib/server/data';
+import { streamCsv } from '#lib/server/data.ts';
 
 const HEADER =
 	'timestamp_iso,provider,server,download_mbps,upload_mbps,ping_ms,jitter_ms,packet_loss_pct\n';

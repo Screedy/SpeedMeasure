@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../../styles/chart.css';
-	import { COLORS, navTicks, niceMax } from '$lib/format';
+	import { COLORS, navTicks, niceMax } from '#lib/format.ts';
 
 	let {
 		series,

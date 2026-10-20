@@ -1,9 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { sql } from '$lib/server/db';
-import { destroySession, hashPassword, verifyPassword } from '$lib/server/auth';
-import { getSettings, redactSettings, saveSettings, SMTP_PASS_UNCHANGED } from '$lib/server/settings';
-import { m } from '$lib/paraglide/messages';
+import { sql } from '#lib/server/db.ts';
+import { destroySession, hashPassword, verifyPassword } from '#lib/server/auth.ts';
+import { getSettings, redactSettings, saveSettings, SMTP_PASS_UNCHANGED } from '#lib/server/settings.ts';
+import { m } from '#lib/paraglide/messages.js';
 import { PROVIDER_NAMES } from '$shared/providers.mjs';
 
 const MIN_PASSWORD = 10;

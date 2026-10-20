@@ -1,8 +1,8 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { sql } from '$lib/server/db';
-import { createSession, hashPassword, needsSetup, verifyPassword } from '$lib/server/auth';
-import { m } from '$lib/paraglide/messages';
+import { sql } from '#lib/server/db.ts';
+import { createSession, hashPassword, needsSetup, verifyPassword } from '#lib/server/auth.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 const MIN_PASSWORD = 10;
 const isEmail = (v: string) => /^[^@\s]+@[^@\s.]+\.[^@\s]+$/.test(v);

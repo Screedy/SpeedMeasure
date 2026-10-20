@@ -2,9 +2,9 @@
 	import '../../styles/settings.css';
 	import { untrack } from 'svelte';
 	import { enhance } from '$app/forms';
-	import { m } from '$lib/paraglide/messages';
-	import { isUnexpectedError, toastErrors } from '$lib/formError';
-	import type { ActionResult } from '@sveltejs/kit';
+	import { m } from '#lib/paraglide/messages.js';
+	import { isUnexpectedError, toastErrors } from '#lib/formError.ts';
+	import type { ActionResult } from '$app/forms';
 
 	let { data, form } = $props();
 

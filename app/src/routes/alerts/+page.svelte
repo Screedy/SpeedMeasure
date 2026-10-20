@@ -3,9 +3,9 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import type { Alert } from '$shared/alerts.mjs';
-	import { DAY, HOUR, fmtClock, fmtDur, fmtWeekdayDate } from '$lib/format';
-	import { m } from '$lib/paraglide/messages';
-	import { toastErrors } from '$lib/formError';
+	import { DAY, HOUR, fmtClock, fmtDur, fmtWeekdayDate } from '#lib/format.ts';
+	import { m } from '#lib/paraglide/messages.js';
+	import { toastErrors } from '#lib/formError.ts';
 
 	let { data } = $props();
 

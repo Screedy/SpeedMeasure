@@ -5,13 +5,13 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
-	import Chart from '$lib/components/Chart.svelte';
-	import NavStrip from '$lib/components/NavStrip.svelte';
-	import Spark from '$lib/components/Spark.svelte';
-	import { COLORS, DAY, HOUR, SERIES, fmtTime, num, toLocalInput, type SeriesKey } from '$lib/format';
-	import { m } from '$lib/paraglide/messages';
-	import { testStatus } from '$lib/testStatus.svelte';
-	import { isUnexpectedError } from '$lib/formError';
+	import Chart from '#lib/components/Chart.svelte';
+	import NavStrip from '#lib/components/NavStrip.svelte';
+	import Spark from '#lib/components/Spark.svelte';
+	import { COLORS, DAY, HOUR, SERIES, fmtTime, num, toLocalInput, type SeriesKey } from '#lib/format.ts';
+	import { m } from '#lib/paraglide/messages.js';
+	import { testStatus } from '#lib/testStatus.svelte.ts';
+	import { isUnexpectedError } from '#lib/formError.ts';
 
 	let { data } = $props();
 
@@ -45,12 +45,12 @@
 	 * (A bare `/` still remembers the last window — see parseRange in +page.server.ts — but
 	 * that happens server-side before the response is sent, not by rewriting this URL.) */
 	function navigate(params: Record<string, string | number | null>) {
-		const url = new URL(page.url);
+		const url = new URL(page.url.href);
 		for (const [k, v] of Object.entries(params)) {
 			if (v === null || v === '') url.searchParams.delete(k);
 			else url.searchParams.set(k, String(v));
 		}
-		goto(url, { replaceState: true, keepFocus: true, noScroll: true });
+		goto(url, { replace: true, reset: false });
 	}
 
 	// A dragged/typed window is a deliberate, absolute selection — clear any active

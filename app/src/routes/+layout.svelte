@@ -2,11 +2,11 @@
 	import '../styles/index.css';
 	import { page } from '$app/state';
 	import { invalidateAll } from '$app/navigation';
-	import { setLocale, getLocale, locales } from '$lib/paraglide/runtime';
-	import { m } from '$lib/paraglide/messages';
-	import { testStatus } from '$lib/testStatus.svelte';
-	import Toast from '$lib/components/Toast.svelte';
-	import favicon from '$lib/assets/favicon.svg';
+	import { setLocale, getLocale, locales } from '#lib/paraglide/runtime.js';
+	import { m } from '#lib/paraglide/messages.js';
+	import { testStatus } from '#lib/testStatus.svelte.ts';
+	import Toast from '#lib/components/Toast.svelte';
+	import favicon from '#lib/assets/favicon.svg';
 
 	let { children, data } = $props();
 

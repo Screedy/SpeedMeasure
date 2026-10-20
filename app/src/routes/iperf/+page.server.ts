@@ -12,8 +12,8 @@ import {
 	stopRun,
 	type Direction,
 	type Protocol
-} from '$lib/server/iperf';
-import { m } from '$lib/paraglide/messages';
+} from '#lib/server/iperf.ts';
+import { m } from '#lib/paraglide/messages.js';
 
 const DIRECTIONS: Direction[] = ['down', 'up', 'bidir'];
 const PROTOCOLS: Protocol[] = ['tcp', 'udp'];

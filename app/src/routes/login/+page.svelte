@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../../styles/login.css';
-	import { m } from '$lib/paraglide/messages';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let { data, form } = $props();
 </script>

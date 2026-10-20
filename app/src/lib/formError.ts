@@ -1,4 +1,4 @@
-import type { ActionResult } from '@sveltejs/kit';
+import type { ActionResult } from '$app/forms';
 import { pushToast } from './toast.svelte';
 import { m } from './paraglide/messages';
 
