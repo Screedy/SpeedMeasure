@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
-import { loadAlerts } from '$lib/server/alerts';
-import { sql } from '$lib/server/db';
+import { loadAlerts } from '#lib/server/alerts.ts';
+import { sql } from '#lib/server/db.ts';
 
 export const load: PageServerLoad = async () => loadAlerts();
 

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../../styles/chart.css';
-	import { niceMax } from '$lib/format';
-	import { m } from '$lib/paraglide/messages';
+	import { niceMax } from '#lib/format.ts';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let {
 		samples,

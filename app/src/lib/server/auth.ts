@@ -1,6 +1,6 @@
 import { createHmac, randomBytes, scrypt, timingSafeEqual } from 'node:crypto';
 import { promisify } from 'node:util';
-import { env } from '$env/dynamic/private';
+import { INSECURE_COOKIES, SESSION_SECRET } from '$app/env/private';
 import type { Cookies } from '@sveltejs/kit';
 import { sql } from './db';
 
@@ -17,7 +17,7 @@ const SESSION_MS = 30 * 24 * 60 * 60 * 1000;
 // tool, so "log everyone out" is "rotate SESSION_SECRET". If it ever grows multi-user
 // or needs per-device revocation, that is when a session table earns its keep.
 const secret =
-	env.SESSION_SECRET ||
+	SESSION_SECRET ||
 	(() => {
 		console.warn('SESSION_SECRET not set — generating an ephemeral one (restarts log you out)');
 		return randomBytes(32).toString('hex');
@@ -45,7 +45,7 @@ export function createSession(cookies: Cookies) {
 		path: '/',
 		httpOnly: true,
 		sameSite: 'lax',
-		secure: !env.INSECURE_COOKIES,
+		secure: !INSECURE_COOKIES,
 		maxAge: SESSION_MS / 1000
 	});
 }

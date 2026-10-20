@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types';
-import { sql } from '$lib/server/db';
-import { isSortKey, loadRows, type SortKey } from '$lib/server/data';
+import { sql } from '#lib/server/db.ts';
+import { isSortKey, loadRows, type SortKey } from '#lib/server/data.ts';
 
 const PAGE_SIZE = 50;
 

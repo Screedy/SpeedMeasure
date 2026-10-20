@@ -1,8 +1,12 @@
 {
 	"name": "app",
-	"private": true,
 	"version": "0.0.1",
+	"private": true,
 	"type": "module",
+	"imports": {
+		"#lib": "./src/lib",
+		"#lib/*": "./src/lib/*"
+	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",

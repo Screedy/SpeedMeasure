@@ -4,11 +4,11 @@
 	import { invalidateAll, goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
-	import type { ActionResult } from '@sveltejs/kit';
-	import IperfChart from '$lib/components/IperfChart.svelte';
-	import { m } from '$lib/paraglide/messages';
-	import { isUnexpectedError, toastErrors } from '$lib/formError';
-	import type { Direction, Protocol } from '$lib/server/iperf';
+	import type { ActionResult } from '$app/forms';
+	import IperfChart from '#lib/components/IperfChart.svelte';
+	import { m } from '#lib/paraglide/messages.js';
+	import { isUnexpectedError, toastErrors } from '#lib/formError.ts';
+	import type { Direction, Protocol } from '#lib/server/iperf.ts';
 
 	let { data, form } = $props();
 
@@ -83,12 +83,12 @@
 	};
 
 	function navigate(params: Record<string, string | number | null>) {
-		const url = new URL(page.url);
+		const url = new URL(page.url.href);
 		for (const [k, v] of Object.entries(params)) {
 			if (v === null || v === '') url.searchParams.delete(k);
 			else url.searchParams.set(k, String(v));
 		}
-		goto(url, { replaceState: true, keepFocus: true, noScroll: true });
+		goto(url, { replace: true, reset: false });
 	}
 	const totalHistoryPages = $derived(Math.max(1, Math.ceil(data.historyTotal / data.historyPageSize)));
 
@@ -173,7 +173,7 @@
 			await update({ reset: false });
 			if (isUnexpectedError(result)) return;
 			if (result.type === 'success' && result.data?.runId) {
-				await goto(`?run=${result.data.runId}`, { replaceState: true, keepFocus: true, noScroll: true });
+				await goto(`?run=${result.data.runId}`, { replace: true, reset: false });
 			}
 		};
 	}

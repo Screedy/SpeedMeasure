@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../../styles/chart.css';
-	import type { Bucket } from '$lib/server/data';
-	import { COLORS, SERIES, fmtAxis, fmtTime, niceMax, num, type SeriesKey } from '$lib/format';
-	import { m } from '$lib/paraglide/messages';
+	import type { Bucket } from '#lib/server/data.ts';
+	import { COLORS, SERIES, fmtAxis, fmtTime, niceMax, num, type SeriesKey } from '#lib/format.ts';
+	import { m } from '#lib/paraglide/messages.js';
 
 	let {
 		buckets,

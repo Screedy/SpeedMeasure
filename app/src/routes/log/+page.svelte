@@ -3,9 +3,9 @@
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import { enhance } from '$app/forms';
-	import { fmtTime, num } from '$lib/format';
-	import { m } from '$lib/paraglide/messages';
-	import { toastErrors } from '$lib/formError';
+	import { fmtTime, num } from '#lib/format.ts';
+	import { m } from '#lib/paraglide/messages.js';
+	import { toastErrors } from '#lib/formError.ts';
 
 	let { data } = $props();
 
@@ -19,12 +19,12 @@
 	] as const;
 
 	function navigate(params: Record<string, string | number | null>) {
-		const url = new URL(page.url);
+		const url = new URL(page.url.href);
 		for (const [k, v] of Object.entries(params)) {
 			if (v === null || v === '') url.searchParams.delete(k);
 			else url.searchParams.set(k, String(v));
 		}
-		goto(url, { replaceState: true, keepFocus: true, noScroll: true });
+		goto(url, { replace: true, reset: false });
 	}
 
 	const sortBy = (key: string) =>

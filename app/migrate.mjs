@@ -2,7 +2,7 @@
 // (see the CMD in app/Dockerfile), so upgrading an instance is just a restart.
 import postgres from 'postgres';
 
-const sql = postgres(process.env.DATABASE_URL, { onnotice: () => {} });
+const sql = postgres(/** @type {string} */ (process.env.DATABASE_URL), { onnotice: () => {} });
 
 try {
 	await sql.file('./schema.sql');
